@@ -20,17 +20,18 @@ jsglet.context = (function() {
                                                   shaderEl.text, this._context);
             }
         }),
+
         Program: Class.$extend({
-            __init__: function(gl, attribs) {
+            __init__: function(gl, p_attribs) {
                 this.gl = gl;
                 this.program = gl.createProgram();
                 this.shaders = [];
-                this.attribs = attribs;
+                this.attribs = p_attribs;
             },
 
-            attachShader: function(shader) {
-                this.gl.attachShader(this.program, shader._shader);
-                this.shaders.push(shader);
+            attachShader: function(p_shader) {
+                this.gl.attachShader(this.program, p_shader._shader);
+                this.shaders.push(p_shader);
             },
 
             link: function() {

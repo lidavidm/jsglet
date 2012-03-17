@@ -34,8 +34,52 @@ jsglet.graphics = (function() {
             }
         }),
 
+        /**
+
+           In OpenGL ES/WebGL there are no vertex buffer objects, simply
+           buffer objects. Also, there are not separate functions for
+           uploading different types of data; instead, you simply bind the
+           data to the correct shader input parameter. This library needs a
+           convention for the usage of the parameters/attributes.
+
+         */
+        createAttribute: function(p_attribute) {
+        }
+
+        /**
+           Parses an attribute/usage pair for a buffer object.
+
+           @example createAttributeUsagePair('v2i') = vertices, 2 integers
+
+           @example createAttributeUsagePair('c3f/static') = color, 3 floats, static
+
+         */
+        createAttributeUsagePair: function(p_format) {
+        },
+
+        VertexDomain: Class.$extend({
+            __init__: function(p_attributeUsages) {
+                for (var i = 0; i < p_attributeUsages.length; i++) {
+                    var attributeUsage = p_attributeUsages[i];
+                    this.buffers[attributeUsage.attribute] = module.VBO(
+                        gl,
+                        size,
+                        attributeUsage.attribute,
+                        attributeUsage.usage
+                    );
+                }
+            }
+        }),
+
+        Batch: Class.$extend({}),
+
         VBO: Class.$extend({
-        });
+            __init__: function(gl, size, target, usage) {
+                this.size = size;
+                this.target = target;
+                this.usage = usage;
+            }
+        })
     };
     return module;
 }());
