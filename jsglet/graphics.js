@@ -158,19 +158,6 @@ jsglet.graphics = (function() {
                 this.target = target;
                 this.usage = usage;
             }
-        }),
-
-        Renderer: Class.$extend({
-            __init__: function(p_context) {
-                this.gl = p_context.gl;
-                this.program = new module.Program(
-                    this.gl, {
-                        "a_Color": module.AttribRole.COLOR,
-                        "a_Position": module.AttribRole.VERTEX
-                    });
-                // XXX above data needed for buffer objects - associates
-                // vertex attribute indices with shader variable names
-            }
         })
     };
     return module;

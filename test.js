@@ -2,10 +2,10 @@ window.onload = function() {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
     var shaders = [context.loadShader("vshader"), context.loadShader("fshader")];
-    var camera = new jsglet.context.Camera(context);
-    context.renderer.program.attachShader(shaders[0]);
-    context.renderer.program.attachShader(shaders[1]);
-    context.renderer.program.link();
+    var camera = new jsglet.context.Camera(context, "u_MVPMatrix");
+    context.program.attachShader(shaders[0]);
+    context.program.attachShader(shaders[1]);
+    context.program.link();
 
     var triangleVertices = new Float32Array([
         10, 10, 0,
@@ -27,9 +27,6 @@ window.onload = function() {
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleColorsBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, triangleColors, gl.STATIC_DRAW);
 
-    var mvpMatrixHandle = gl.getUniformLocation(context.renderer.program.program,
-                                                "u_MVPMatrix");
-
     function reshape(context, gl) {
 	    gl.viewport(0, 0, context.width, context.height);
     }
@@ -40,12 +37,12 @@ window.onload = function() {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        var vertexHandle = context.renderer.program.attribIndex("vertex");
+        var vertexHandle = context.program.attribIndex("vertex");
         gl.enableVertexAttribArray(vertexHandle);
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleVerticesBuffer);
         gl.vertexAttribPointer(vertexHandle, 3, gl.FLOAT, false, 0, 0);
 
-        var colorHandle = context.renderer.program.attribIndex("color");
+        var colorHandle = context.program.attribIndex("color");
         gl.enableVertexAttribArray(colorHandle);
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleVerticesBuffer);
         gl.vertexAttribPointer(colorHandle, 3, gl.FLOAT, false, 0, 0);
