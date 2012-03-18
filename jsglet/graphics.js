@@ -71,6 +71,10 @@ jsglet.graphics = (function() {
 
             attribIndex: function(p_attrib) {
                 return this.attribIndices[p_attrib];
+            },
+
+            uniformLocation: function(p_uniformName) {
+                return this.gl.getUniformLocation(this.program, p_uniformName);
             }
         }),
 

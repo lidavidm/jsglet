@@ -2,10 +2,10 @@ window.onload = function() {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
     var shaders = [context.loadShader("vshader"), context.loadShader("fshader")];
-    var camera = new jsglet.context.Camera(context, "u_MVPMatrix");
     context.program.attachShader(shaders[0]);
     context.program.attachShader(shaders[1]);
     context.program.link();
+    var camera = new jsglet.context.Camera(context, "u_MVPMatrix");
 
     var triangleVertices = new Float32Array([
         10, 10, 0,
@@ -33,7 +33,6 @@ window.onload = function() {
 
     function draw(context, gl) {
         reshape(context, gl);
-        var mvpMatrix = camera.makeModelViewProjectionMatrix();
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -47,7 +46,7 @@ window.onload = function() {
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleVerticesBuffer);
         gl.vertexAttribPointer(colorHandle, 3, gl.FLOAT, false, 0, 0);
 
-        gl.uniformMatrix4fv(mvpMatrixHandle, false, mvpMatrix);
+        camera.apply();
         gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     document.getElementById("start").onclick = function() {

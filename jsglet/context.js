@@ -7,8 +7,8 @@ jsglet.context = (function() {
                 this.width = parseInt(this._canvas.getAttribute("width"), 10);
                 this.height = parseInt(this._canvas.getAttribute("height"), 10);
                 this.program = new jsglet.graphics.Program(this.gl, {
-                    "a_Color": module.AttribRole.COLOR,
-                    "a_Position": module.AttribRole.VERTEX
+                    "a_Color": jsglet.graphics.AttribRole.COLOR,
+                    "a_Position": jsglet.graphics.AttribRole.VERTEX
                 });
                 this.gl.clearColor(0, 0, 0, 1);
             },
@@ -27,7 +27,8 @@ jsglet.context = (function() {
         Camera: Class.$extend({
             __init__: function(p_context, p_uniformLocation) {
                 this.gl = p_context.gl;
-                this.matrixUniformLocation = p_context.program.getUniformLocation(p_uniformLocation);
+                this.matrixHandle = p_context.program.
+                    uniformLocation(p_uniformLocation);
 
                 this.left = 0;
                 this.right = p_context.width;
@@ -74,6 +75,11 @@ jsglet.context = (function() {
                 mat4.multiply(this.makeProjectionMatrix(),
                               this.makeModelViewMatrix(), result);
                 return result;
+            },
+
+            apply: function() {
+                this.gl.uniformMatrix4fv(this.matrixHandle, false,
+                                         this.makeModelViewProjectionMatrix());
             },
 
             eyeAt: function(x, y, z) {
