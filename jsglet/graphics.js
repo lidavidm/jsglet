@@ -44,7 +44,7 @@ jsglet.graphics = (function() {
 
          */
         createAttribute: function(p_attribute) {
-        }
+        },
 
         /**
            Parses an attribute/usage pair for a buffer object.

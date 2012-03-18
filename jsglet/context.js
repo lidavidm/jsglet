@@ -13,8 +13,8 @@ jsglet.context = (function() {
             loadShader: function (p_shaderId) {
                 var shaderEl = document.getElementById(p_shaderId);
                 if (!shaderEl) {
-                    console.error("Shader element " + p_shaderId + " not found!");
-                    return null;
+                    throw new jsglet.error("shader: loadShader: Shader element",
+                                           p_shaderId, "not found!");
                 }
                 return new jsglet.graphics.Shader(shaderEl.type,
                                                   shaderEl.text, this._context);
@@ -43,11 +43,11 @@ jsglet.context = (function() {
                     this.program, this.gl.LINK_STATUS);
                 if (!linked && !this.gl.isContextLost()) {
                     var error = this.gl.getProgramInfoLog(this.program);
-                    console.error("context: Program: error linking program; " + error);
                     this.gl.deleteProgram(program);
                     _.map(function(s){ this.gl.deleteProgram(s._shader) },
                           this.shaders);
-                    return null;
+                    throw new jsglet.error(
+                        "context: Program: error linking program", error);
                 }
 
                 this.gl.useProgram(this.program);
