@@ -4,30 +4,30 @@ jsglet.graphics = (function() {
 
     var module = {
         Shader: Class.$extend({
-            __init__: function (p_type, p_source, p_context) {
+            __init__: function (gl, p_type, p_source) {
                 if (p_type == _VERTEX_SHADER) {
-                    var shaderType = p_context.VERTEX_SHADER;
+                    var shaderType = gl.VERTEX_SHADER;
                 }
                 else if (p_type == _FRAGMENT_SHADER) {
-                    var shaderType = p_context.FRAGMENT_SHADER;
+                    var shaderType = gl.FRAGMENT_SHADER;
                 }
                 else {
                     console.error("Shader type " + p_type + " not known!");
                     return;
                 }
 
-                var shader = p_context.createShader(shaderType);
-                p_context.shaderSource(shader, p_source);
-                p_context.compileShader(shader);
+                var shader = gl.createShader(shaderType);
+                gl.shaderSource(shader, p_source);
+                gl.compileShader(shader);
 
-                var compiled = p_context.getShaderParameter(
+                var compiled = gl.getShaderParameter(
                     shader,
-                    p_context.COMPILE_STATUS
+                    gl.COMPILE_STATUS
                 );
-                if(!compiled && !p_context.isContextLost()) {
-                    var error = p_context.getShaderInfoLog(shader);
+                if(!compiled && !gl.isContextLost()) {
+                    var error = gl.getShaderInfoLog(shader);
                     console.error("Error loading shader: " + error);
-                    p_context.deleteShader(shader);
+                    gl.deleteShader(shader);
                     return;
                 }
                 this._shader = shader;
@@ -50,7 +50,7 @@ jsglet.graphics = (function() {
             link: function() {
                 var varNames = _.keys(this.attribs);
                 this.attribIndices = {};
-                for (var i = 0; i < varNames; i++){
+                for (var i = 0; i < varNames.length; i++){
                     this.gl.bindAttribLocation(this.program, i, varNames[i]);
                     this.attribIndices[this.attribs[varNames[i]]] = i;
                 }
@@ -107,7 +107,7 @@ jsglet.graphics = (function() {
                 count: null,
                 type: null
             };
-        }
+        },
 
         /**
            Parses an attribute/usage pair for a buffer object.
@@ -165,9 +165,8 @@ jsglet.graphics = (function() {
                 this.gl = p_context.gl;
                 this.program = new module.Program(
                     this.gl, {
-                        "vNormal": module.AttribRole.NORMAL,
-                        "vColor": module.AttribRole.COLOR,
-                        "vPosition": module.AttribRole.VERTEX
+                        "a_Color": module.AttribRole.COLOR,
+                        "a_Position": module.AttribRole.VERTEX
                     });
                 // XXX above data needed for buffer objects - associates
                 // vertex attribute indices with shader variable names
