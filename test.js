@@ -1,9 +1,9 @@
 window.onload = function() {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var shaders = [context.loadShader("vshader"), context.loadShader("fshader")];
-    context.program.attachShader(shaders[0]);
-    context.program.attachShader(shaders[1]);
-    context.program.link();
+    context.renderer.program.attachShader(shaders[0]);
+    context.renderer.program.attachShader(shaders[1]);
+    context.renderer.program.link();
 
     function reshape(context, gl) {
         gl.viewport(0, 0, context.width, context.height);
