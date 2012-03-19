@@ -7,13 +7,13 @@ jsglet.clock = (function(){
                 this.everyFrame = {};
                 this.interval = {};
                 this.justOnce = {};
-                this.lastID = 0;
+                this.lastId = 0;
                 this.lastTime = Date.now();
                 this.fpsTime = Date.now();
                 this.fps = [];
             },
 
-            getFPS: function() {
+            getFps: function() {
                 return 1000 * (this.fps.length / (_.last(this.fps) - this.fpsTime));
             },
 
@@ -41,11 +41,11 @@ jsglet.clock = (function(){
                     }
                 }
 
-                for (var runOnceID in this.justOnce) {
-                    var callback = this.justOnce[runOnceID];
+                for (var runOnceId in this.justOnce) {
+                    var callback = this.justOnce[runOnceId];
                     if ((p_timestamp - callback.lastRun) >= callback.interval) {
                         callback.callback();
-                        delete this.justOnce[runOnceID];
+                        delete this.justOnce[runOnceId];
                     }
                 }
             },
@@ -60,9 +60,9 @@ jsglet.clock = (function(){
                     var callback = p_callback;
                 }
 
-                this.everyFrame[this.lastID] = callback;
-                this.lastID += 1;
-                return this.lastID - 1;
+                this.everyFrame[this.lastId] = callback;
+                this.lastId += 1;
+                return this.lastId - 1;
             },
 
             scheduleInterval: function(p_callback, p_interval, p_context) {
@@ -75,13 +75,13 @@ jsglet.clock = (function(){
                     var callback = p_callback;
                 }
 
-                this.interval[this.lastID] = {
+                this.interval[this.lastId] = {
                     interval: p_interval,
                     callback: callback,
                     lastRun: Date.now()
                 };
-                this.lastID += 1;
-                return this.lastID - 1;
+                this.lastId += 1;
+                return this.lastId - 1;
             },
 
             scheduleOnce: function(p_callback, p_delay, p_context) {
@@ -94,28 +94,28 @@ jsglet.clock = (function(){
                     var callback = p_callback;
                 }
 
-                this.justOnce[this.lastID] = {
+                this.justOnce[this.lastId] = {
                     interval: p_delay,
                     lastRun: this.lastTime,
                     callback: callback
                 };
-                this.lastID += 1;
-                return this.lastID - 1;
+                this.lastId += 1;
+                return this.lastId - 1;
             },
 
-            unschedule: function(p_callbackID) {
-                if (this.interval.hasOwnProperty(p_callbackID)) {
-                    delete this.interval[p_callbackID];
+            unschedule: function(p_callbackId) {
+                if (this.interval.hasOwnProperty(p_callbackId)) {
+                    delete this.interval[p_callbackId];
                     return true;
                 }
 
-                if (this.everyFrame.hasOwnProperty(p_callbackID)) {
-                    delete this.everyFrame[p_callbackID];
+                if (this.everyFrame.hasOwnProperty(p_callbackId)) {
+                    delete this.everyFrame[p_callbackId];
                     return true;
                 }
 
-                if (this.justOnce.hasOwnProperty(p_callbackID)) {
-                    delete this.justOnce[p_callbackID];
+                if (this.justOnce.hasOwnProperty(p_callbackId)) {
+                    delete this.justOnce[p_callbackId];
                     return true;
                 }
 
@@ -142,8 +142,8 @@ jsglet.clock = (function(){
             return module.getDefaultClock().scheduleOnce(p_callback, p_delay, p_context);
         },
 
-        unschedule: function(p_callbackID) {
-            return module.getDefaultClock().unschedule(p_callbackID);
+        unschedule: function(p_callbackId) {
+            return module.getDefaultClock().unschedule(p_callbackId);
         },
     };
 

@@ -41,9 +41,11 @@ window.onload = function() {
         b.draw();
     }
 
+    var fpsCounter = document.getElementById("fps");
+
     jsglet.clock.scheduleInterval(function() {
         camera.rotateZAbout(Math.PI / 30, 60, 60);
-        console.log(jsglet.clock.getDefaultClock().getFPS());
+        fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
     }, 1000 / 30);
 
     context.onDraw(draw);
