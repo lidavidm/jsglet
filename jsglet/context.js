@@ -1,7 +1,10 @@
 jsglet.context = (function() {
     var module = {
         Context: Class.$extend({
+            __include__: [jsglet.event.EventDispatcherMixin("draw")],
+
             __init__: function(p_canvas) {
+                this.initEvent();
                 this._canvas = p_canvas;
                 this._context = this.gl = p_canvas.getContext('experimental-webgl');
                 this.width = parseInt(this._canvas.getAttribute("width"), 10);

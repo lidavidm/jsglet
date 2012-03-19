@@ -37,7 +37,7 @@ jsglet.app = (function(){
 
             _loop: function(p_timestamp) {
                 jsglet.clock.getDefaultClock().tick(p_timestamp);
-                _.each(_contexts, function(c) { c.draw(); })
+                _.each(_contexts, function(c) { c.doDraw(); })
                 this.requestID = this.requestAnimationFrame(this._loop);
             }
         }),
