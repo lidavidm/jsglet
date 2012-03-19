@@ -9,9 +9,26 @@ jsglet.clock = (function(){
                 this.justOnce = {};
                 this.lastID = 0;
                 this.lastTime = Date.now();
+                this.fpsTime = Date.now();
+                this.fps = [];
+            },
+
+            getFPS: function() {
+                return 1000 * (this.fps.length / (_.last(this.fps) - this.fpsTime));
             },
 
             tick: function(p_timestamp) {
+                this.fps.push(p_timestamp);
+                if ((p_timestamp - this.fpsTime) > 1000) {
+                    var newTimes = _.filter(
+                        this.fps,
+                        function(t) {
+                            return (t >= (p_timestamp - 1000));
+                        });
+                    this.fpsTime = this.fps[this.fps.length - newTimes.length];
+                    this.fps = newTimes;
+                }
+
                 _.each(_.values(this.everyFrame), function(f) { f() });
 
                 var callbacks = _.values(this.interval);

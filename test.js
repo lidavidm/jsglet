@@ -43,6 +43,7 @@ window.onload = function() {
 
     jsglet.clock.scheduleInterval(function() {
         camera.rotateZAbout(Math.PI / 30, 60, 60);
+        console.log(jsglet.clock.getDefaultClock().getFPS());
     }, 1000 / 30);
 
     context.onDraw(draw);
