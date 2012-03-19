@@ -11,6 +11,7 @@ jsglet.context = (function() {
                     "a_Position": jsglet.graphics.AttribRole.VERTEX
                 });
                 this.gl.clearColor(0, 0, 0, 1);
+                jsglet.app.addContext(this);
             },
 
             loadShader: function (p_shaderId) {
@@ -21,6 +22,9 @@ jsglet.context = (function() {
                 }
                 return new jsglet.graphics.Shader(this.gl, shaderEl.type,
                                                   shaderEl.text);
+            },
+
+            draw: function() {
             }
         }),
 

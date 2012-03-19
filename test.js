@@ -28,19 +28,21 @@ window.onload = function() {
         buffer('c3f/static', triangleColors);
     console.log(b);
 
-    function reshape(context, gl) {
+    function reshape() {
 	    gl.viewport(0, 0, context.width, context.height);
     }
 
-    function draw(context, gl) {
-        reshape(context, gl);
+    function draw() {
+        reshape();
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         camera.apply();
         b.draw();
     }
+    context.draw = draw;
     document.getElementById("start").onclick = function() {
-        setInterval(function(){draw(context, context.gl)}, 500);
+        //setInterval(function(){draw(context, context.gl)}, 500);
+        jsglet.app.run();
     };
 };
