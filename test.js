@@ -43,7 +43,6 @@ window.onload = function() {
 
     context.onDraw(draw);
     document.getElementById("start").onclick = function() {
-        //setInterval(function(){draw(context, context.gl)}, 500);
         jsglet.app.run();
     };
 };
