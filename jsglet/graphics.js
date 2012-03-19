@@ -82,7 +82,10 @@ jsglet.graphics = (function() {
             VERTEX: "vertex",
             COLOR: "color",
             NORMAL: "normal",
-            TEXTURE: "texture"
+            TEXTURE: "texture",
+            v: "vertex",
+            c: "color",
+            t: "texture"
         },
 
         // XXX actually look up the GL constants - is there a way to set
@@ -91,6 +94,10 @@ jsglet.graphics = (function() {
             STATIC: "static",
             DYNAMIC: "dynamic",
             STREAM: "stream"
+        },
+
+        AttribType: {
+            f: "FLOAT"
         },
 
         /**
@@ -107,9 +114,9 @@ jsglet.graphics = (function() {
          */
         createAttribute: function(p_attribute) {
             return {
-                role: null,
-                count: null,
-                type: null
+                role: module.AttribRole[p_attribute.charAt(0)],
+                count: parseInt(p_attribute.charAt(1), 10),
+                type: module.AttribType[p_attribute.charAt(2)]
             };
         },
 
@@ -156,11 +163,66 @@ jsglet.graphics = (function() {
 
         Batch: Class.$extend({}),
 
-        VBO: Class.$extend({
-            __init__: function(gl, size, target, usage) {
-                this.size = size;
-                this.target = target;
-                this.usage = usage;
+        MultiBufferObject: Class.$extend({
+            __classvars__: {
+                BUFFER_USAGE: {
+                    "static": "STATIC_DRAW"
+                }
+            },
+
+            __init__: function(gl, p_attributeIndices, p_renderingMethod) {
+                this.gl = gl;
+                this.attributeIndices = p_attributeIndices;
+                this.bufferObjects = {};
+                this.renderingMethod = p_renderingMethod;
+                this.count = null;
+            },
+
+            /**
+               Intended to be used fluently.
+             */
+            buffer: function(p_attribute, p_data) {
+                var attribute = module.createAttributeUsagePair(p_attribute);
+                var buffer = this.gl.createBuffer();
+                var handle = this.attributeIndices[attribute.role];
+
+                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+                this.gl.bufferData(this.gl.ARRAY_BUFFER, p_data,
+                                   this.bufferUsage(attribute.usage));
+                this.bufferObjects[attribute.role] = {
+                    buffer: buffer,
+                    type: this.gl[attribute.type],
+                    count: attribute.count,
+                    handle: handle
+                };
+
+                var count = p_data.length / attribute.count;
+                if (this.count !== null && count !== this.count) {
+                    throw new jsglet.core.error(
+                        "MultiBufferObject: buffer: data",
+                        "counts do not match", this.count, count);
+                }
+                this.count = count;
+
+                return this;
+            },
+
+            draw: function() {
+                for (var role in this.bufferObjects) {
+                    if (this.bufferObjects.hasOwnProperty(role)) {
+                        var data = this.bufferObjects[role];
+                        this.gl.enableVertexAttribArray(data.handle);
+                        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, data.buffer);
+                        this.gl.vertexAttribPointer(
+                            data.handle, data.count,
+                            data.type, false, 0, 0);
+                    }
+                }
+                this.gl.drawArrays(this.renderingMethod, 0, this.count);
+            },
+
+            bufferUsage: function(p_usage) {
+                return this.gl[this.$class.BUFFER_USAGE[p_usage]];
             }
         })
     };

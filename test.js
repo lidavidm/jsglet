@@ -14,18 +14,19 @@ window.onload = function() {
     ]);
 
     var triangleColors = new Float32Array([
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1
+        0, 1, 1,
+        1, 0, 1,
+        1, 1, 0
     ]);
 
-    var triangleVerticesBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVerticesBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.STATIC_DRAW);
-
-    var triangleColorsBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleColorsBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, triangleColors, gl.STATIC_DRAW);
+    var b = new jsglet.graphics.MultiBufferObject(
+        context.gl,
+        context.program.attribIndices,
+        context.gl.TRIANGLES
+    ).
+        buffer('v3f/static', triangleVertices).
+        buffer('c3f/static', triangleColors);
+    console.log(b);
 
     function reshape(context, gl) {
 	    gl.viewport(0, 0, context.width, context.height);
@@ -36,18 +37,8 @@ window.onload = function() {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        var vertexHandle = context.program.attribIndex("vertex");
-        gl.enableVertexAttribArray(vertexHandle);
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVerticesBuffer);
-        gl.vertexAttribPointer(vertexHandle, 3, gl.FLOAT, false, 0, 0);
-
-        var colorHandle = context.program.attribIndex("color");
-        gl.enableVertexAttribArray(colorHandle);
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVerticesBuffer);
-        gl.vertexAttribPointer(colorHandle, 3, gl.FLOAT, false, 0, 0);
-
         camera.apply();
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        b.draw();
     }
     document.getElementById("start").onclick = function() {
         setInterval(function(){draw(context, context.gl)}, 500);
