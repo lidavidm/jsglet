@@ -90,7 +90,26 @@ jsglet.context = (function() {
                 this.eye[0] = x;
                 this.eye[1] = y;
                 this.eye[2] = z;
+            },
+
+            rotateX: function(p_rads) {
+                mat4.rotateX(this.modelMatrix, p_rads)
+            },
+
+            rotateZ: function(p_rads) {
+                mat4.rotateZ(this.modelMatrix, p_rads)
+            },
+
+            rotateZAbout: function(p_rads, p_x, p_y) {
+                this.translate2D(p_x, p_y);
+                this.rotateZ(p_rads);
+                this.translate2D(-p_x, -p_y);
+            },
+
+            translate2D: function(p_x, p_y) {
+                mat4.translate(this.modelMatrix, vec3.create([p_x, p_y, 0]));
             }
+
         })
     };
     return module;

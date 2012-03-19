@@ -41,6 +41,10 @@ window.onload = function() {
         b.draw();
     }
 
+    jsglet.clock.scheduleInterval(function() {
+        camera.rotateZAbout(Math.PI / 30, 60, 60);
+    }, 1000 / 30);
+
     context.onDraw(draw);
     document.getElementById("start").onclick = function() {
         jsglet.app.run();
