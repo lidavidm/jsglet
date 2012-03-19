@@ -147,20 +147,6 @@ jsglet.graphics = (function() {
             }
         },
 
-        VertexDomain: Class.$extend({
-            __init__: function(p_attributeUsages) {
-                for (var i = 0; i < p_attributeUsages.length; i++) {
-                    var attributeUsage = p_attributeUsages[i];
-                    this.buffers[attributeUsage.attribute] = module.VBO(
-                        gl,
-                        size,
-                        attributeUsage.attribute,
-                        attributeUsage.usage
-                    );
-                }
-            }
-        }),
-
         Batch: Class.$extend({}),
 
         MultiBufferObject: Class.$extend({
