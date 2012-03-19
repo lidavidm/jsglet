@@ -40,7 +40,7 @@ window.onload = function() {
         camera.apply();
         b.draw();
     }
-    context.draw = draw;
+
     context.onDraw(draw);
     document.getElementById("start").onclick = function() {
         //setInterval(function(){draw(context, context.gl)}, 500);

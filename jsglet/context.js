@@ -25,9 +25,6 @@ jsglet.context = (function() {
                 }
                 return new jsglet.graphics.Shader(this.gl, shaderEl.type,
                                                   shaderEl.text);
-            },
-
-            draw: function() {
             }
         }),
 
