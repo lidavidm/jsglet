@@ -9,20 +9,22 @@ window.onload = function() {
 
     var triangleVertices = new Float32Array([
         10, 10, 0,
-        10, 110, 0,
-        110, 10, 0
+        20, 10, 0,
+        15, 30, 0,
+        10, 10, 0
     ]);
 
     var triangleColors = new Float32Array([
-        0, 1, 1,
-        1, 0, 1,
-        1, 1, 0
+        1, 1, 1,
+        1, 1, 1,
+        1, 1, 1,
+        1, 1, 1
     ]);
 
     var b = new jsglet.graphics.MultiBufferObject(
         context.gl,
         context.program.attribIndices,
-        context.gl.TRIANGLES
+        context.gl.LINE_STRIP
     ).
         buffer('v3f/static', triangleVertices).
         buffer('c3f/static', triangleColors);
@@ -44,7 +46,7 @@ window.onload = function() {
     var fpsCounter = document.getElementById("fps");
 
     jsglet.clock.scheduleInterval(function() {
-        camera.rotateZAbout(Math.PI / 30, 60, 60);
+        camera.rotateZAbout(Math.PI / 30, 15, 15);
         fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
     }, 1000 / 30);
 
