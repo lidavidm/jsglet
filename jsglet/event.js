@@ -29,15 +29,19 @@ jsglet.event = (function() {
             for (var i = 0; i < args.length; i++) {
                 var eventName = args[i];
                 var eventNameC = eventName[0].toUpperCase() + eventName.slice(1);
-                mixin["on" + eventNameC] = function(callback) {
+                mixin["on" + eventNameC] = (function() {
                     var _eventName = eventName;
-                    this.addListener(_eventName, callback);
-                };
-                mixin["do" + eventNameC] = function() {
-                    var _eventName = _eventName;
-                    var args = Array.prototype.slice.call(arguments);
-                    this.triggerListener(_eventName, args);
-                };
+                    return function(p_callback) {
+                        this.addListener(_eventName, p_callback);
+                    }
+                }());
+                mixin["do" + eventNameC] = (function() {
+                    var _eventName = eventName;
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments);
+                        this.triggerListener(_eventName, args);
+                    }
+                }());
             }
 
             return mixin;
