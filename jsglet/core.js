@@ -12,6 +12,12 @@ var jsglet = (function() {
                 var args = Array.prototype.slice.call(arguments);
                 return p_fn.apply(p_this, args);
             }
+        },
+
+        util: {
+            capitalize: function(p_str) {
+                return p_str.charAt(0).toUpperCase() + p_str.slice(1);
+            }
         }
     };
     return module;
