@@ -51,6 +51,10 @@ window.onload = function() {
     }, 1000 / 30);
 
     context.onDraw(draw);
+
+    context.onKeyDown(function(e) {
+        console.log(e);
+    });
     document.getElementById("start").onclick = function() {
         jsglet.app.run();
     };

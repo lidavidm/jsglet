@@ -1,7 +1,11 @@
 jsglet.context = (function() {
     var module = {
         Context: Class.$extend({
-            __include__: [jsglet.event.EventDispatcherMixin("draw")],
+            __include__: [
+                jsglet.event.EventDispatcherMixin(
+                    "draw", "keyUp", "keyDown", "mouseDown", "mouseUp"
+                )
+            ],
 
             __init__: function(p_canvas) {
                 this.initEvent();
@@ -15,6 +19,27 @@ jsglet.context = (function() {
                 });
                 this.gl.clearColor(0, 0, 0, 1);
                 jsglet.app.addContext(this);
+
+                // Event handling
+                bean.add(this._canvas, {
+                    mousedown: jsglet.proxy(function(e) {
+                        this.doMouseDown(e);
+                    }, this),
+
+                    mouseup: jsglet.proxy(function(e) {
+                        this.doMouseUp(e);
+                    }, this)
+                });
+
+                bean.add(window, {
+                    keydown: jsglet.proxy(function(e) {
+                        this.doKeyDown(e);
+                    }, this),
+
+                    keyup: jsglet.proxy(function(e) {
+                        this.doKeyUp(e);
+                    }, this)
+                });
             },
 
             loadShader: function (p_shaderId) {
