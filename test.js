@@ -53,7 +53,9 @@ window.onload = function() {
     context.onDraw(draw);
 
     context.onKeyDown(function(e) {
-        console.log(e);
+        if (e.keyCode == jsglet.event.KeyCode.UP) {
+            e.preventDefault();
+        }
     });
     document.getElementById("start").onclick = function() {
         jsglet.app.run();

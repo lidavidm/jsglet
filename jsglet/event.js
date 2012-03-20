@@ -45,6 +45,11 @@ jsglet.event = (function() {
             }
 
             return mixin;
+        },
+
+        KeyCode: {
+            UP: 38,
+            DOWN: 40
         }
     };
 
