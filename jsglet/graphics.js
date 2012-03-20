@@ -182,6 +182,8 @@ jsglet.graphics = (function() {
                     handle: handle
                 };
 
+                this["set" + attribute.role.charAt(0).toUpperCase() + attribute.role.slice(1)] = 'test';
+
                 var count = p_data.length / attribute.count;
                 if (this.count !== null && count !== this.count) {
                     throw new jsglet.core.error(

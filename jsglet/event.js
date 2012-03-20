@@ -28,7 +28,7 @@ jsglet.event = (function() {
 
             for (var i = 0; i < args.length; i++) {
                 var eventName = args[i];
-                var eventNameC = eventName[0].toUpperCase() + eventName.slice(1);
+                var eventNameC = eventName.charAt(0).toUpperCase() + eventName.slice(1);
                 mixin["on" + eventNameC] = (function() {
                     var _eventName = eventName;
                     return function(p_callback) {

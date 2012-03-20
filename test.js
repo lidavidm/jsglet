@@ -55,6 +55,8 @@ window.onload = function() {
     context.onKeyDown(function(e) {
         if (e.keyCode == jsglet.event.KeyCode.UP) {
             e.preventDefault();
+            triangleVertices[0] = 200;
+            b.buffer('v3f/static', triangleVertices);
         }
     });
     document.getElementById("start").onclick = function() {
