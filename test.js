@@ -56,7 +56,9 @@ window.onload = function() {
         if (e.keyCode == jsglet.event.KeyCode.UP) {
             e.preventDefault();
             triangleVertices[0] = 200;
-            b.buffer('v3f/static', triangleVertices);
+            b.updateVertex(triangleVertices);
+            triangleColors[0] = 0.5;
+            b.updateColor(triangleColors);
         }
     });
     document.getElementById("start").onclick = function() {

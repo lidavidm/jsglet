@@ -182,8 +182,6 @@ jsglet.graphics = (function() {
                     handle: handle
                 };
 
-                this["set" + jsglet.util.capitalize(attribute.role)] = 'test';
-
                 var count = p_data.length / attribute.count;
                 if (this.count !== null && count !== this.count) {
                     throw new jsglet.core.error(
@@ -191,6 +189,19 @@ jsglet.graphics = (function() {
                         "counts do not match", this.count, count);
                 }
                 this.count = count;
+
+                var update = "update" + jsglet.util.capitalize(attribute.role);
+                this[update] = function(p_data) {
+                    var newCount = p_data.length / attribute.count;
+                    if (newCount != this.count) {
+                        throw new jsglet.core.error(
+                            "MultiBufferObject: buffer: data",
+                            "counts do not match", this.count, newCount);
+                    }
+                    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+                    this.gl.bufferData(this.gl.ARRAY_BUFFER, p_data,
+                                       this.bufferUsage(attribute.usage));
+                };
 
                 return this;
             },
