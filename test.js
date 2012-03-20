@@ -46,7 +46,7 @@ window.onload = function() {
     var fpsCounter = document.getElementById("fps");
 
     jsglet.clock.scheduleInterval(function() {
-        camera.rotateZAbout(Math.PI / 30, 15, 15);
+        //camera.rotateZAbout(Math.PI / 30, 15, 15);
         fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
     }, 1000 / 30);
 
@@ -55,7 +55,10 @@ window.onload = function() {
     context.onKeyDown(function(e) {
         if (e.keyCode == jsglet.event.KeyCode.UP) {
             e.preventDefault();
-            triangleVertices[0] = 200;
+            triangleVertices[1] += 1;
+            triangleVertices[4] += 1;
+            triangleVertices[7] += 1;
+            triangleVertices[10]+= 1;
             b.updateVertex(triangleVertices);
             triangleColors[0] = 0.5;
             b.updateColor(triangleColors);
