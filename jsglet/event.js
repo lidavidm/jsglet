@@ -25,7 +25,7 @@ jsglet.event = (function() {
                         listeners[i].apply(null, args);
                     }
                 },
-                
+
                 // To implement stacks we create a wrapper function that calls
                 // all the functions in the stack level, and keep the stack
                 // separately
@@ -33,7 +33,7 @@ jsglet.event = (function() {
                     // Search each parameter for listeners
                     var objects = Array.prototype.slice.call(arguments);
                     var listeners = {};
-                    
+
                     for (var i = 0; i < objects.length; i++) {
                         for (var propName in objects[i]) {
                             // we want to search superclasses too
@@ -48,21 +48,21 @@ jsglet.event = (function() {
                             }
                         }
                     }
-                    
+
                     var events = _.keys(listeners);
-                    
+
                     for (var i = 0; i < events.length; i++) {
                         var event = events[i];
                         var eventListeners = listeners[event];
-                        
+
                         function __stackLevel(p_args) {
                             _.each(__stackLevel.__listeners, function(p_fn) {
                                 p_fn.apply(null, p_args);
                             });
                         }
-                        
+
                         __stackLevel.__listeners = eventListeners;
-                        
+
                         this.addListener(event, __stackLevel);
                     }
                 }
@@ -87,11 +87,6 @@ jsglet.event = (function() {
             }
 
             return mixin;
-        },
-
-        KeyCode: {
-            UP: 38,
-            DOWN: 40
         }
     };
 

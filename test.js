@@ -33,7 +33,7 @@ window.onload = function() {
     context.onDraw(draw);
 
     context.onKeyDown(function(e) {
-        if (e.keyCode == jsglet.event.KeyCode.UP) {
+        if (e.keyCode == jsglet.event.keyboard.KeyCode.UP) {
             e.preventDefault();
             s.sizeDelta(10, 10);
         }
