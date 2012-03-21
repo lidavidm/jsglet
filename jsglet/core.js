@@ -23,6 +23,7 @@ var jsglet = (function() {
                 function(p_args) {
                     this["_" + p_name] = p_args;
                 };
+
             return function() {
                 var args = Array.prototype.slice.call(arguments);
 
@@ -32,7 +33,18 @@ var jsglet = (function() {
                 else {
                     return fn_get.apply(this);
                 }
-            }
+            };
+        },
+
+        propertyDelta: function(p_name, p_useProp) {
+            return function(p_delta) {
+                if (p_useProp) {
+                    this[p_name](this[p_name]() + p_delta);
+                }
+                else {
+                    this[p_name] += p_delta;
+                }
+            };
         },
 
         util: {

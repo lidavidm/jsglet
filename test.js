@@ -5,26 +5,8 @@ window.onload = function() {
     context.program.attachShader(shaders[0]);
     context.program.attachShader(shaders[1]);
     context.program.link();
+    context.program.mvpUniform("u_MVPMatrix");
     var camera = new jsglet.context.Camera(context, "u_MVPMatrix");
-
-    var triangleVertices = new Float32Array([
-        10, 10, 0,
-        20, 10, 0,
-        15, 30, 0,
-        10, 10, 0
-    ]);
-
-    var triangleColors = new Float32Array([
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1
-    ]);
-
-    var b = jsglet.graphics.buffer(context.program, context.gl.LINE_STRIP, [
-        ['v3f', triangleVertices],
-        ['c3f', triangleColors]
-    ]);
 
     var s = new jsglet.graphics.sprite.Sprite(context.program, {});
 
@@ -38,7 +20,7 @@ window.onload = function() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         camera.apply();
-        b.draw();
+        s.draw();
     }
 
     var fpsCounter = document.getElementById("fps");
@@ -53,13 +35,7 @@ window.onload = function() {
     context.onKeyDown(function(e) {
         if (e.keyCode == jsglet.event.KeyCode.UP) {
             e.preventDefault();
-            triangleVertices[1] += 1;
-            triangleVertices[4] += 1;
-            triangleVertices[7] += 1;
-            triangleVertices[10]+= 1;
-            b.updateVertex(triangleVertices);
-            triangleColors[0] = 0.5;
-            b.updateColor(triangleColors);
+            s.sizeDelta(10, 10);
         }
     });
     document.getElementById("start").onclick = function() {

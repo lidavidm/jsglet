@@ -40,6 +40,7 @@ jsglet.graphics = (function() {
                 this.program = gl.createProgram();
                 this.shaders = [];
                 this.attribs = p_attribs;
+                this._mvpUniform = null;
             },
 
             attachShader: function(p_shader) {
@@ -75,7 +76,16 @@ jsglet.graphics = (function() {
 
             uniformLocation: function(p_uniformName) {
                 return this.gl.getUniformLocation(this.program, p_uniformName);
-            }
+            },
+
+            // Special-case attributes and uniforms
+
+            mvpUniform: jsglet.property("mvpUniform", {
+                get: function() {
+                    return this.uniformLocation(this._mvpUniform);
+                },
+                set: "default"
+            })
         }),
 
         AttribRole: {
@@ -181,7 +191,7 @@ jsglet.graphics = (function() {
 
                 var count = p_data.length / attribute.count;
                 if (this.count !== null && count !== this.count) {
-                    throw new jsglet.core.error(
+                    throw new jsglet.error(
                         "MultiBufferObject: buffer: data",
                         "counts do not match", this.count, count);
                 }
@@ -191,7 +201,7 @@ jsglet.graphics = (function() {
                 this[update] = function(p_data) {
                     var newCount = p_data.length / attribute.count;
                     if (newCount != this.count) {
-                        throw new jsglet.core.error(
+                        throw new jsglet.error(
                             "MultiBufferObject: buffer: data",
                             "counts do not match", this.count, newCount);
                     }
