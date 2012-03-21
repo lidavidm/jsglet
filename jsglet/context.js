@@ -54,10 +54,9 @@ jsglet.context = (function() {
         }),
 
         Camera: Class.$extend({
-            __init__: function(p_context, p_uniformLocation) {
+            __init__: function(p_context) {
                 this.gl = p_context.gl;
-                this.matrixHandle = p_context.program.
-                    uniformLocation(p_uniformLocation);
+                this.matrixHandle = p_context.program.mvpUniform();
 
                 this.left = 0;
                 this.right = p_context.width;

@@ -6,7 +6,7 @@ window.onload = function() {
     context.program.attachShader(shaders[1]);
     context.program.link();
     context.program.mvpUniform("u_MVPMatrix");
-    var camera = new jsglet.context.Camera(context, "u_MVPMatrix");
+    var camera = new jsglet.context.Camera(context);
 
     var s = new jsglet.graphics.sprite.Sprite(context.program, {});
 
