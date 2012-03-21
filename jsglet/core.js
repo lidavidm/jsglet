@@ -50,6 +50,10 @@ var jsglet = (function() {
         util: {
             capitalize: function(p_str) {
                 return p_str.charAt(0).toUpperCase() + p_str.slice(1);
+            },
+            
+            uncapitalize: function(p_str) {
+                return p_str.charAt(0).toLowerCase() + p_str.slice(1);
             }
         }
     };
