@@ -14,6 +14,27 @@ var jsglet = (function() {
             }
         },
 
+        property: function(p_name, p_fns) {
+            var fn_get = p_fns["get"] != "default" ? p_fns["get"] :
+                function() {
+                    return this["_" + p_name];
+                };
+            var fn_set = p_fns["set"] != "default" ? p_fns["set"] :
+                function(p_args) {
+                    this["_" + p_name] = p_args;
+                };
+            return function() {
+                var args = Array.prototype.slice.call(arguments);
+
+                if (args.length) {
+                    fn_set.apply(this, args);
+                }
+                else {
+                    return fn_get.apply(this);
+                }
+            }
+        },
+
         util: {
             capitalize: function(p_str) {
                 return p_str.charAt(0).toUpperCase() + p_str.slice(1);
