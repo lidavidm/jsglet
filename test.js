@@ -26,6 +26,8 @@ window.onload = function() {
         ['c3f', triangleColors]
     ]);
 
+    var s = new jsglet.graphics.sprite.Sprite(context.program, {});
+
     function reshape() {
 	    gl.viewport(0, 0, context.width, context.height);
     }
