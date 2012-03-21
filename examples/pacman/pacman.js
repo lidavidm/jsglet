@@ -5,29 +5,8 @@ window.onload = function() {
     context.program.attachShader(context.loadShader("fshader"));
     context.program.link();
     var camera = new jsglet.context.Camera(context, "u_MVPMatrix");
-
-    var triangleVertices = new Float32Array([
-        10, 10, 0,
-        20, 10, 0,
-        15, 30, 0,
-        10, 10, 0
-    ]);
-
-    var triangleColors = new Float32Array([
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1,
-        1, 1, 1
-    ]);
-
-    var b = new jsglet.graphics.MultiBufferObject(
-        context.gl,
-        context.program.attribIndices,
-        context.gl.LINE_STRIP
-    ).
-        buffer('v3f/static', triangleVertices).
-        buffer('c3f/static', triangleColors);
-    console.log(b);
+    
+    var pacman = new jsglet.graphics.sprite.Sprite(context.program);
 
     function reshape() {
         gl.viewport(0, 0, context.width, context.height);
@@ -39,7 +18,7 @@ window.onload = function() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         camera.apply();
-        b.draw();
+        pacman.draw();
     }
 
     var fpsCounter = document.getElementById("fps");
@@ -52,14 +31,7 @@ window.onload = function() {
 
     context.onKeyDown(function(e) {
         if (e.keyCode == jsglet.event.KeyCode.UP) {
-            e.preventDefault();
-            triangleVertices[1] += 1;
-            triangleVertices[4] += 1;
-            triangleVertices[7] += 1;
-            triangleVertices[10]+= 1;
-            b.updateVertex(triangleVertices);
-            triangleColors[0] = 0.5;
-            b.updateColor(triangleColors);
+            pacman.positionDelta(10, 0);
         }
     });
     document.getElementById("start").onclick = function() {
