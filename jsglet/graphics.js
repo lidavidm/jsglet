@@ -164,10 +164,7 @@ jsglet.graphics = (function() {
                 this.count = null;
             },
 
-            /**
-               Intended to be used fluently.
-             */
-            buffer: function(p_attribute, p_data) {
+            addBuffer: function(p_attribute, p_data) {
                 var attribute = module.createAttributeUsagePair(p_attribute);
                 var buffer = this.gl.createBuffer();
                 var handle = this.attributeIndices[attribute.role];
@@ -202,8 +199,6 @@ jsglet.graphics = (function() {
                     this.gl.bufferData(this.gl.ARRAY_BUFFER, p_data,
                                        this.bufferUsage(attribute.usage));
                 };
-
-                return this;
             },
 
             draw: function() {
@@ -223,7 +218,21 @@ jsglet.graphics = (function() {
             bufferUsage: function(p_usage) {
                 return this.gl[this.$class.BUFFER_USAGE[p_usage]];
             }
-        })
+        }),
+
+        buffer: function(p_program, p_renderingMethod, p_buffers) {
+            var result = new module.MultiBufferObject(
+                p_program.gl,
+                p_program.attribIndices,
+                p_renderingMethod
+            );
+
+            _.each(p_buffers, function(buffer) {
+                result.addBuffer(buffer[0], buffer[1]);
+            });
+
+            return result;
+        }
     };
     return module;
 }());

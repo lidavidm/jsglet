@@ -21,14 +21,10 @@ window.onload = function() {
         1, 1, 1
     ]);
 
-    var b = new jsglet.graphics.MultiBufferObject(
-        context.gl,
-        context.program.attribIndices,
-        context.gl.LINE_STRIP
-    ).
-        buffer('v3f/static', triangleVertices).
-        buffer('c3f/static', triangleColors);
-    console.log(b);
+    var b = jsglet.graphics.buffer(context.program, context.gl.LINE_STRIP, [
+        ['v3f', triangleVertices],
+        ['c3f', triangleColors]
+    ]);
 
     function reshape() {
 	    gl.viewport(0, 0, context.width, context.height);
