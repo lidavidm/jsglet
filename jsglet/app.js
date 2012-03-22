@@ -1,4 +1,4 @@
-jsglet.app = (function(){
+jsglet.app = module('jsglet.app', ['jsglet.core'], function(){
     _defaultEventLoop = null;
     _contexts = [];
 
@@ -56,4 +56,4 @@ jsglet.app = (function(){
     };
 
     return module;
-}());
+});

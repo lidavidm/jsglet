@@ -1,4 +1,4 @@
-jsglet.graphics = (function() {
+jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
     var _VERTEX_SHADER = "x-shader/x-vertex";
     var _FRAGMENT_SHADER = "x-shader/x-fragment";
 
@@ -245,4 +245,4 @@ jsglet.graphics = (function() {
         }
     };
     return module;
-}());
+});

@@ -1,4 +1,4 @@
-jsglet.graphics.sprite = (function(){
+jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], function(){
     var module = {
         Sprite: Class.$extend({
             __init__: function(p_program, p_config) {
@@ -100,4 +100,4 @@ jsglet.graphics.sprite = (function(){
     };
 
     return module;
-}());
+});

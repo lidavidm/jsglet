@@ -1,4 +1,4 @@
-window.onload = function() {
+module._finishLoadingModules(['jsglet.core', 'jsglet.context', 'jsglet.graphics'], function() {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
     var shaders = [context.loadShader("vshader"), context.loadShader("fshader")];
@@ -41,4 +41,5 @@ window.onload = function() {
     document.getElementById("start").onclick = function() {
         jsglet.app.run();
     };
-};
+    console.log('run')
+});

@@ -1,4 +1,4 @@
-jsglet.event.keyboard = (function() {
+jsglet.event.keyboard = module('jsglet.event.keyboard', ['jsglet.event'], function() {
     var module = {
         KeyStateManager: Class.$extend({
             __init__: function() {
@@ -13,4 +13,4 @@ jsglet.event.keyboard = (function() {
     };
 
     return module;
-}());
+});

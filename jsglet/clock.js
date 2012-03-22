@@ -1,4 +1,4 @@
-jsglet.clock = (function(){
+jsglet.clock = module('jsglet.clock', ['jsglet.core'], function(){
     var _defaultClock = null;
 
     var module = {
@@ -148,4 +148,4 @@ jsglet.clock = (function(){
     };
 
     return module;
-}());
+});

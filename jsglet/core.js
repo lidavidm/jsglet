@@ -18,15 +18,16 @@ var module = (function() {
 
         loadModule: function(p_name) {
             var names = internals.parseModuleName(p_name);
-            $.getScript(names[0] + "/" + names.slice(1).join('.') + '.js')
-            internals.loading.push(p_name);
+            $.getScript(names[0] + "/" + names.slice(1).join('.') + '.js');
+            if (!_.include(internals.loading, p_name)) {
+                internals.loading.push(p_name);
+            }
         },
 
-        finishLoadingModules: function(p_ignore, p_finished, p_result) {
-            if (internals.loading.length > 1 &&
-                internals.loading[0] != p_ignore) {
+        _finishLoadingModules: function(p_deps, p_finished, p_result) {
+            if (!_.all(p_deps, internals.isLoaded)) {
                 setTimeout(function() {
-                    internals.finishLoadingModules(p_ignore, p_finished, p_result);
+                    internals._finishLoadingModules(p_deps, p_finished, p_result);
                 }, 1000);
             }
             else {
@@ -34,12 +35,18 @@ var module = (function() {
             }
         },
 
+        finishLoadingModules: function(p_finished) {
+            internals._finishLoadingModules([], p_finished, {});
+        },
+
         parseModuleName: function(p_name) {
             return p_name.split('.');
         },
 
         createModule: function(p_name, p_deps, p_module) {
-            internals.loading.push(p_name);
+            if (!_.include(internals.loading, p_name)) {
+                internals.loading.push(p_name);
+            }
             _.each(p_deps, function(dep) {
                 if (!internals.isLoaded(dep)) {
                     internals.loadModule(dep);
@@ -47,7 +54,7 @@ var module = (function() {
             });
 
             var output = {};
-            internals.finishLoadingModules(p_name, function(output) {
+            internals._finishLoadingModules(p_deps, function(output) {
                 var mod = p_module.call(window);
                 var root = internals.modules;
                 var names = internals.parseModuleName(p_name);
@@ -59,7 +66,6 @@ var module = (function() {
                     root = root[names[i]];
                 }
                 root[names[names.length - 1]] = mod;
-                console.log(internals.modules);
                 internals.loading = _.reject(
                     internals.loading,
                     function(x) { return x == p_name; }
@@ -139,6 +145,15 @@ var jsglet = module('jsglet', [], function() {
     };
     return module;
 });
+
 $(document).ready(function (){
-    module.loadModule('jsglet.event');
-})
+    _.each([
+        'jsglet.event',
+        'jsglet.context',
+        'jsglet.app',
+        'jsglet.clock',
+        'jsglet.event.keyboard',
+        'jsglet.graphics',
+        'jsglet.graphics.sprite'
+    ] , module.loadModule);
+});
