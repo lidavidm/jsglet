@@ -1,4 +1,83 @@
-var jsglet = (function() {
+var module = (function() {
+    var internals = {
+
+        modules: {},
+        loading: [],
+
+        isLoaded: function(p_name) {
+            var names = internals.parseModuleName(p_name);
+            var root = internals.modules;
+            for (var i = 0; i < names.length; i++) {
+                if (!_.has(root, names[i])) {
+                    return false;
+                }
+            }
+            return true;
+        },
+
+        loadModule: function(p_name) {
+            var head = document.getElementsByTagName("head")[0];
+            var script = document.createElement("script");
+            var names = parseModuleName(p_name);
+            script.type = "test/javascript";
+            script.src = names[0] + "/" + names.slice(1).join('.') + '.js';
+            head.appendChild(script);
+        },
+
+        finishLoadingModules: function(p_finished, p_result) {
+            if (internals.loading.length) {
+                setTimeout(function() {
+                    internals.finishLoadingModules(p_finished, p_result);
+                }, 1000);
+            }
+            else {
+                p_finished.call(p_result, p_result);
+            }
+        },
+
+        parseModuleName: function(p_name) {
+            return p_name.split('.');
+        },
+
+        createModule: function(p_name, p_deps, p_module) {
+            internals.loading.push(p_name);
+            _.each(p_deps, function(dep) {
+                if (!internals.isLoaded(dep)) {
+                    internals.loadModule(dep);
+                }
+            });
+
+            var output = {};
+            internals.finishLoadingModules(function(output) {
+                var mod = p_module.call(window);
+                var root = internals.modules;
+                var names = internals.parseModuleName(p_name);
+
+                for (var i = 0; i < names.length - 1; i++) {
+                    if (!_.has(root, names[i])) {
+                        root[names[i]] = {};
+                    }
+                    root = root[names[i]];
+                }
+                root[names[names.length - 1]] = mod;
+                console.log(internals.modules);
+                internals.loading = _.reject(
+                    internals.loading,
+                    function(x) { return x == p_name; }
+                );
+                output.module = mod;
+            }, output);
+
+            return output.module;
+        }
+    };
+
+    _.extend(internals.createModule, internals);
+
+    return internals.createModule;
+}());
+
+var jsglet = module('jsglet', [], function() {
     module = {
         error: Class.$extend({
             __init__: function() {
@@ -51,11 +130,11 @@ var jsglet = (function() {
             capitalize: function(p_str) {
                 return p_str.charAt(0).toUpperCase() + p_str.slice(1);
             },
-            
+
             uncapitalize: function(p_str) {
                 return p_str.charAt(0).toLowerCase() + p_str.slice(1);
             }
         }
     };
     return module;
-}());
+});
