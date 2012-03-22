@@ -24,13 +24,16 @@ var module = (function() {
             head.appendChild(script);
         },
 
-        finishLoadingModules: function(p_finished, p_result) {
-            if (internals.loading.length) {
+        finishLoadingModules: function(p_ignore, p_finished, p_result) {
+            if (internals.loading.length > 1 &&
+                internals.loading[0] == p_ignore) {
+                console.log("loading")
                 setTimeout(function() {
-                    internals.finishLoadingModules(p_finished, p_result);
+                    internals.finishLoadingModules(p_ignore, p_finished, p_result);
                 }, 1000);
             }
             else {
+                console.log("finished")
                 p_finished.call(p_result, p_result);
             }
         },
@@ -48,7 +51,7 @@ var module = (function() {
             });
 
             var output = {};
-            internals.finishLoadingModules(function(output) {
+            internals.finishLoadingModules(p_name, function(output) {
                 var mod = p_module.call(window);
                 var root = internals.modules;
                 var names = internals.parseModuleName(p_name);
