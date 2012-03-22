@@ -11,29 +11,25 @@ var module = (function() {
                 if (!_.has(root, names[i])) {
                     return false;
                 }
+                root = root[names[i]];
             }
             return true;
         },
 
         loadModule: function(p_name) {
-            var head = document.getElementsByTagName("head")[0];
-            var script = document.createElement("script");
-            var names = parseModuleName(p_name);
-            script.type = "test/javascript";
-            script.src = names[0] + "/" + names.slice(1).join('.') + '.js';
-            head.appendChild(script);
+            var names = internals.parseModuleName(p_name);
+            $.getScript(names[0] + "/" + names.slice(1).join('.') + '.js')
+            internals.loading.push(p_name);
         },
 
         finishLoadingModules: function(p_ignore, p_finished, p_result) {
             if (internals.loading.length > 1 &&
-                internals.loading[0] == p_ignore) {
-                console.log("loading")
+                internals.loading[0] != p_ignore) {
                 setTimeout(function() {
                     internals.finishLoadingModules(p_ignore, p_finished, p_result);
                 }, 1000);
             }
             else {
-                console.log("finished")
                 p_finished.call(p_result, p_result);
             }
         },
@@ -81,7 +77,9 @@ var module = (function() {
 }());
 
 var jsglet = module('jsglet', [], function() {
-    module = {
+    var module = {
+        core: {}, // for the dependency checker
+
         error: Class.$extend({
             __init__: function() {
                 this.message = Array.prototype.slice.call(arguments).join(' ');
@@ -141,3 +139,6 @@ var jsglet = module('jsglet', [], function() {
     };
     return module;
 });
+$(document).ready(function (){
+    module.loadModule('jsglet.event');
+})

@@ -1,4 +1,4 @@
-jsglet.event = (function() {
+jsglet.event = module('jsglet.event', ['jsglet.core'], function() {
     var module = {
         EventDispatcherMixin: function() {
             var args = Array.prototype.slice.call(arguments);
@@ -91,4 +91,4 @@ jsglet.event = (function() {
     };
 
     return module;
-}());
+});
