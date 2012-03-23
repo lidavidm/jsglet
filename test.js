@@ -2,10 +2,16 @@ module._finishLoadingModules(['jsglet.core', 'jsglet.context', 'jsglet.graphics'
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
     var shaders = [context.loadShader("vshader"), context.loadShader("fshader")];
-    context.program.attachShader(shaders[0]);
-    context.program.attachShader(shaders[1]);
-    context.program.link();
-    context.program.mvpUniform("u_MVPMatrix");
+    var program = new jsglet.graphics.Program(gl, {
+        "a_Color": jsglet.graphics.AttribRole.COLOR,
+        "a_Position": jsglet.graphics.AttribRole.VERTEX
+    });
+    program.attachShader(shaders[0]);
+    program.attachShader(shaders[1]);
+    program.link();
+    program.mvpUniform("u_MVPMatrix");
+    context.program.addProgram("basic", program);
+    context.program.useProgram("basic");
     var camera = new jsglet.context.Camera(context);
 
     var s = new jsglet.graphics.sprite.Sprite(context.program, {});

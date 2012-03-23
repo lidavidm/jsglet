@@ -67,8 +67,6 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
                           this.shaders);
                     return null;
                 }
-
-                this.gl.useProgram(this.program);
             },
 
             uniformLocation: function(p_uniformName) {
@@ -86,7 +84,24 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
         }),
 
         CompositeProgram: Class.$extend({
+            __init__: function(gl) {
+                this.gl = gl;
+                this._programs = {};
+                this._active = null;
+            },
 
+            addProgram: function(p_name, p_program) {
+                this._programs[p_name] = p_program;
+            },
+
+            useProgram: function(p_name) {
+                this.gl.useProgram(this._programs[p_name].program);
+                this._active = this._programs[p_name];
+            },
+
+            mvpUniform: function() {
+                return this._active.mvpUniform();
+            }
         }),
 
         AttribRole: {

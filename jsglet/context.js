@@ -15,10 +15,7 @@ jsglet.context = module(
                     this._context = this.gl = p_canvas.getContext('experimental-webgl');
                     this.width = parseInt(this._canvas.getAttribute("width"), 10);
                     this.height = parseInt(this._canvas.getAttribute("height"), 10);
-                    this.program = new jsglet.graphics.Program(this.gl, {
-                        "a_Color": jsglet.graphics.AttribRole.COLOR,
-                        "a_Position": jsglet.graphics.AttribRole.VERTEX
-                    });
+                    this.program = new jsglet.graphics.CompositeProgram(this.gl);
                     this.gl.clearColor(0, 0, 0, 1);
                     jsglet.app.addContext(this);
 
