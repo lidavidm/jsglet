@@ -1,14 +1,12 @@
 jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], function(){
     var module = {
         Sprite: Class.$extend({
-            __init__: function(p_program, p_config) {
+            __init__: function(gl, p_config) {
                 this._x = 0;
                 this._y = 0;
                 this._width = 1;
                 this._height = 1;
-                this._modelMatrix = mat4.create();
-                this._matrixHandle = p_program.mvpUniform();
-                this.gl = p_program.gl;
+                this.gl = gl;
                 this._buffer = jsglet.graphics.buffer(
                     this.gl,
                     this.gl.TRIANGLE_STRIP,
@@ -30,8 +28,6 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
             },
 
             draw: function() {
-                // this.gl.uniformMatrix4fv(this._matrixHandle, false,
-                //                          this._modelMatrix);
                 this._buffer.draw();
             },
 

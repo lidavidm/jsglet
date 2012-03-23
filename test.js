@@ -14,7 +14,7 @@ module._finishLoadingModules(['jsglet.core', 'jsglet.context', 'jsglet.graphics'
     context.program.useProgram("basic");
     var camera = new jsglet.context.Camera(context);
 
-    var s = new jsglet.graphics.sprite.Sprite(context.program, {});
+    var s = new jsglet.graphics.sprite.Sprite(context.gl, {});
 
     function reshape() {
 	    gl.viewport(0, 0, context.width, context.height);
