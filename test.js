@@ -41,5 +41,4 @@ module._finishLoadingModules(['jsglet.core', 'jsglet.context', 'jsglet.graphics'
     document.getElementById("start").onclick = function() {
         jsglet.app.run();
     };
-    console.log('run')
 });

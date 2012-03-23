@@ -88,6 +88,10 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
             })
         }),
 
+        CompositeProgram: Class.$extend({
+
+        }),
+
         AttribRole: {
             VERTEX: "vertex",
             COLOR: "color",
@@ -244,5 +248,6 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
             return result;
         }
     };
+
     return module;
 });

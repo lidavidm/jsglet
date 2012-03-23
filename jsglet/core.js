@@ -18,7 +18,10 @@ var module = (function() {
 
         loadModule: function(p_name) {
             var names = internals.parseModuleName(p_name);
-            $.getScript(names[0] + "/" + names.slice(1).join('.') + '.js');
+            $.getScript(names[0] + "/" + names.slice(1).join('.') + '.js').
+                fail(function(xhr, settings, exception) {
+                    console.error(exception);
+                });
             if (!_.include(internals.loading, p_name)) {
                 internals.loading.push(p_name);
             }
