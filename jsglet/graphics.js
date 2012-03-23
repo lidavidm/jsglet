@@ -244,11 +244,8 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
             }
         }),
 
-        buffer: function(p_program, p_renderingMethod, p_buffers) {
-            var result = new module.MultiBufferObject(
-                p_program.gl,
-                p_renderingMethod
-            );
+        buffer: function(gl, p_renderingMethod, p_buffers) {
+            var result = new module.MultiBufferObject(gl, p_renderingMethod);
 
             _.each(p_buffers, function(buffer) {
                 result.addBuffer(buffer[0], buffer[1]);

@@ -10,7 +10,7 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 this._matrixHandle = p_program.mvpUniform();
                 this.gl = p_program.gl;
                 this._buffer = jsglet.graphics.buffer(
-                    p_program,
+                    this.gl,
                     this.gl.TRIANGLE_STRIP,
                     [['v2f', new Float32Array([
                         this._x, this._y,
