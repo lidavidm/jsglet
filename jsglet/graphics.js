@@ -50,11 +50,12 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
 
             link: function() {
                 var varNames = _.keys(this.attribs);
-                this.attribIndices = {};
-                for (var i = 0; i < varNames.length; i++){
-                    this.gl.bindAttribLocation(this.program, i, varNames[i]);
-                    this.attribIndices[this.attribs[varNames[i]]] = i;
-                }
+                _.each(varNames, function(attribute) {
+                    this.gl.bindAttribLocation(
+                        this.program,
+                        this.attribs[attribute], attribute
+                    );
+                }, this);
                 this.gl.linkProgram(this.program);
                 var linked = this.gl.getProgramParameter(
                     this.program, this.gl.LINK_STATUS);
@@ -68,10 +69,6 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
                 }
 
                 this.gl.useProgram(this.program);
-            },
-
-            attribIndex: function(p_attrib) {
-                return this.attribIndices[p_attrib];
             },
 
             uniformLocation: function(p_uniformName) {
@@ -93,13 +90,12 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
         }),
 
         AttribRole: {
-            VERTEX: "vertex",
-            COLOR: "color",
-            NORMAL: "normal",
-            TEXTURE: "texture",
-            v: "vertex",
-            c: "color",
-            t: "texture"
+            VERTEX: 0,
+            COLOR: 1,
+            TEXTURE: 2,
+            v: "VERTEX",
+            c: "COLOR",
+            t: "TEXTURE"
         },
 
         // XXX actually look up the GL constants - is there a way to set
@@ -170,9 +166,8 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
                 }
             },
 
-            __init__: function(gl, p_attributeIndices, p_renderingMethod) {
+            __init__: function(gl, p_renderingMethod) {
                 this.gl = gl;
-                this.attributeIndices = p_attributeIndices;
                 this.bufferObjects = {};
                 this.renderingMethod = p_renderingMethod;
                 this.count = null;
@@ -181,7 +176,7 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
             addBuffer: function(p_attribute, p_data) {
                 var attribute = module.createAttributeUsagePair(p_attribute);
                 var buffer = this.gl.createBuffer();
-                var handle = this.attributeIndices[attribute.role];
+                var handle = module.AttribRole[attribute.role];
 
                 this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
                 this.gl.bufferData(this.gl.ARRAY_BUFFER, p_data,
@@ -201,7 +196,7 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
                 }
                 this.count = count;
 
-                var update = "update" + jsglet.util.capitalize(attribute.role);
+                var update = "update" + jsglet.util.capitalize(attribute.role.toLowerCase());
                 this[update] = function(p_data) {
                     var newCount = p_data.length / attribute.count;
                     if (newCount != this.count) {
@@ -237,7 +232,6 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
         buffer: function(p_program, p_renderingMethod, p_buffers) {
             var result = new module.MultiBufferObject(
                 p_program.gl,
-                p_program.attribIndices,
                 p_renderingMethod
             );
 
