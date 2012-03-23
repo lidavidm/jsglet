@@ -80,6 +80,13 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
                     return this.uniformLocation(this._mvpUniform);
                 },
                 set: "default"
+            }),
+
+            textureUniform: jsglet.property("textureUniform", {
+                get: function() {
+                    return this.uniformLocation(this._textureUniform);
+                },
+                set: "default"
             })
         }),
 
