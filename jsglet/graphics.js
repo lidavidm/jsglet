@@ -1,4 +1,4 @@
-jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
+define(["./common"], function(common) {
     var _VERTEX_SHADER = "x-shader/x-vertex";
     var _FRAGMENT_SHADER = "x-shader/x-fragment";
 
@@ -75,14 +75,14 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
 
             // Special-case attributes and uniforms
 
-            mvpUniform: jsglet.property("mvpUniform", {
+            mvpUniform: common.property("mvpUniform", {
                 get: function() {
                     return this.uniformLocation(this._mvpUniform);
                 },
                 set: "default"
             }),
 
-            textureUniform: jsglet.property("textureUniform", {
+            textureUniform: common.property("textureUniform", {
                 get: function() {
                     return this.uniformLocation(this._textureUniform);
                 },
@@ -175,7 +175,7 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
                 return attribute;
             }
             else {
-                throw new jsglet.error("Invalid attribute/usage pair:", p_format);
+                throw new common.error("Invalid attribute/usage pair:", p_format);
             }
         },
 
@@ -212,17 +212,17 @@ jsglet.graphics = module('jsglet.graphics', ['jsglet.core'], function() {
 
                 var count = p_data.length / attribute.count;
                 if (this.count !== null && count !== this.count) {
-                    throw new jsglet.error(
+                    throw new common.error(
                         "MultiBufferObject: buffer: data",
                         "counts do not match", this.count, count);
                 }
                 this.count = count;
 
-                var update = "update" + jsglet.util.capitalize(attribute.role.toLowerCase());
+                var update = "update" + common.util.capitalize(attribute.role.toLowerCase());
                 this[update] = function(p_data) {
                     var newCount = p_data.length / attribute.count;
                     if (newCount != this.count) {
-                        throw new jsglet.error(
+                        throw new common.error(
                             "MultiBufferObject: buffer: data",
                             "counts do not match", this.count, newCount);
                     }

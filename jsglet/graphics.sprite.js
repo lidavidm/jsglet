@@ -1,4 +1,4 @@
-jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], function(){
+define(["./common", "./graphics"], function(common, graphics) {
     var module = {
         Sprite: Class.$extend({
             __init__: function(gl, p_config) {
@@ -7,7 +7,7 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 this._width = 1;
                 this._height = 1;
                 this.gl = gl;
-                this._buffer = jsglet.graphics.buffer(
+                this._buffer = graphics.buffer(
                     this.gl,
                     this.gl.TRIANGLE_STRIP,
                     [['v2f', new Float32Array([
@@ -31,7 +31,7 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 this._buffer.draw();
             },
 
-            x: jsglet.property("x", {
+            x: common.property("x", {
                 get: "default",
                 set: function(p_x) {
                     this._x = p_x;
@@ -39,7 +39,7 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 }
             }),
 
-            y: jsglet.property("y", {
+            y: common.property("y", {
                 get: "default",
                 set: function(p_y) {
                     this._y = p_y;
@@ -47,7 +47,7 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 }
             }),
 
-            width: jsglet.property("width", {
+            width: common.property("width", {
                 get: "default",
                 set: function(p_width) {
                     this._width = p_width;
@@ -55,7 +55,7 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 }
             }),
 
-            height: jsglet.property("height", {
+            height: common.property("height", {
                 get: "default",
                 set: function(p_height) {
                     this._height = p_height;
@@ -63,11 +63,11 @@ jsglet.graphics.sprite = module('jsglet.graphics.sprite', ['jsglet.graphics'], f
                 }
             }),
 
-            widthDelta: jsglet.propertyDelta("width", true),
+            widthDelta: common.propertyDelta("width", true),
 
-            heightDelta: jsglet.propertyDelta("height", true),
+            heightDelta: common.propertyDelta("height", true),
 
-            size: jsglet.property("size", {
+            size: common.property("size", {
                 get: function() {
                     return [this._width, this._height];
                 },

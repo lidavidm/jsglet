@@ -1,4 +1,4 @@
-module._finishLoadingModules(['jsglet.core', 'jsglet.context', 'jsglet.graphics'], function() {
+require(["jsglet/core", "jsglet/context"], function(jsglet) {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
     var shaders = [context.loadShader("vshader"), context.loadShader("fshader")];

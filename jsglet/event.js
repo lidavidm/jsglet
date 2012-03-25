@@ -1,4 +1,4 @@
-jsglet.event = module('jsglet.event', ['jsglet.core'], function() {
+define(["./common"], function(common) {
     var module = {
         EventDispatcherMixin: function() {
             var args = Array.prototype.slice.call(arguments);
@@ -70,7 +70,7 @@ jsglet.event = module('jsglet.event', ['jsglet.core'], function() {
 
             for (var i = 0; i < args.length; i++) {
                 var eventName = args[i];
-                var eventNameC = jsglet.util.capitalize(eventName);
+                var eventNameC = common.util.capitalize(eventName);
                 mixin["on" + eventNameC] = (function() {
                     var _eventName = eventName;
                     return function(p_callback) {

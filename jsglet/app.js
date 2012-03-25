@@ -1,4 +1,4 @@
-jsglet.app = module('jsglet.app', ['jsglet.core'], function(){
+define(["./common", "./clock"], function(common, clock) {
     _defaultEventLoop = null;
     _contexts = [];
 
@@ -36,7 +36,7 @@ jsglet.app = module('jsglet.app', ['jsglet.core'], function(){
             },
 
             _loop: function(p_timestamp) {
-                jsglet.clock.getDefaultClock().tick(p_timestamp);
+                clock.getDefaultClock().tick(p_timestamp);
                 _.each(_contexts, function(c) { c.doDraw(); })
                 this.requestID = this.requestAnimationFrame(this._loop);
             }
