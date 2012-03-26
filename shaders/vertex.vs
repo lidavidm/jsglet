@@ -1,9 +1,9 @@
 uniform mat4 u_MVPMatrix;
 
 attribute vec4 a_Position;
-attribute vec4 a_Texture;
+attribute vec2 a_Texture;
 
-varying vec4 v_Texture;
+varying vec2 v_Texture;
 
 void main()
 {

@@ -1,6 +1,6 @@
 precision mediump float;
 
-varying vec4 v_Texture;
+varying vec2 v_Texture;
 uniform sampler2D u_Texture;
 
 void main()
