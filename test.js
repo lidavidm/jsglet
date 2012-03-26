@@ -1,8 +1,9 @@
 require(["jsglet/core", "jsglet/context"], function(jsglet) {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
-    var shaders = [context.loadShaderAjax("shaders/vertex.vs"),
-                   context.loadShaderAjax("shaders/fragment.fs")];
+    $.when(context.loadShaderAjax("shaders/vertex.vs"),
+           context.loadShaderAjax("shaders/fragment.fs")).
+        then(function() {console.log(arguments);});
     var program = new jsglet.graphics.Program(gl, {
         //"a_Color": jsglet.graphics.AttribRole.COLOR,
         "a_Texture": jsglet.graphics.AttribRole.TEXTURE,

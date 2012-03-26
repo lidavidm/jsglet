@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 define(
     ["./common", "./event", "./app", "./graphics", "./clock"],
     function(common, event, app, graphics, clock) {
@@ -47,19 +48,22 @@ define(
                     throw new common.error("shader: loadShader: Shader element",
                                            p_shaderId, "not found!");
                 }
-                return new graphics.Shader(this.gl, shaderEl.type,
+                return new jsglet.graphics.Shader(this.gl, shaderEl.type,
                                                   shaderEl.text);
             },
 
-            loadShaderAjax: function(url, p_type, callback) {
+            loadShaderAjax: function(url, p_type) {
+                var deferred = new $.Deferred();
+
                 $.get(url, function(data){
                     var shader = new jsglet.graphics.Shader(
                         this.gl,
                         p_type,
                         data
                     );
-                    callback(shader);
+                    deferred.resolve(shader);
                 });
+                return deferred.promise();
             }
         }),
 
