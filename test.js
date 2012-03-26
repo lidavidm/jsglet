@@ -7,6 +7,7 @@ require(["jsglet/core", "jsglet/context"], function(jsglet) {
         "a_Position": jsglet.graphics.AttribRole.VERTEX
     });
     program.mvpUniform("u_MVPMatrix");
+    program.textureUniform("u_Texture");
     context.program.addProgram("basic", program);
     var camera = null;
     $.when(context.loadShaderAjax("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
@@ -17,10 +18,16 @@ require(["jsglet/core", "jsglet/context"], function(jsglet) {
             program.attachShader(arguments[1]);
             program.link();
             context.program.useProgram("basic");
-            camera = new jsglet.context.Camera(context)
+            camera = new jsglet.context.Camera(context);
         });
 
-    var s = new jsglet.graphics.sprite.Sprite(context.gl, {});
+    var s = null;
+    var textureD = jsglet.image.load(context.gl,
+                                     document.getElementById("texture").src,
+                                     program.textureUniform());
+    $.when(textureD).then(function(texture) {
+        s = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
+    });
 
     function reshape() {
 	    gl.viewport(0, 0, context.width, context.height);

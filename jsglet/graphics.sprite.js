@@ -1,7 +1,8 @@
 define(["./common", "./graphics"], function(common, graphics) {
     var module = {
         Sprite: Class.$extend({
-            __init__: function(gl, p_config) {
+            __init__: function(gl, p_texture, p_config) {
+                this._texture = p_texture;
                 this._x = 0;
                 this._y = 0;
                 this._width = 1;
@@ -17,17 +18,18 @@ define(["./common", "./graphics"], function(common, graphics) {
                         this._x, this._y,
                         this._x, this._y + this._height
                     ])],
-                     ['c3f', new Float32Array([
-                         1, 1, 1,
-                         1, 1, 1,
-                         1, 1, 1,
-                         1, 1, 1,
-                         1, 1, 1
+                     ['t2f', new Float32Array([
+                         0, 0,
+                         1, 0,
+                         1, 1,
+                         0, 0,
+                         0, 1
                      ])]]
                 );
             },
 
             draw: function() {
+                this._texture.bind();
                 this._buffer.draw();
             },
 

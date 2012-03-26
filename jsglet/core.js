@@ -1,11 +1,12 @@
 define(
-    ["./common", "./app", "./event", "./event.keyboard",
+    ["./common", "./app", "./event", "./event.keyboard", "./image",
      "./graphics", "./graphics.sprite", "./clock", "./context"],
-    function(jsglet, app, event, keyboard, graphics, sprite,
+    function(jsglet, app, event, keyboard, image, graphics, sprite,
              clock, context){
         jsglet.event = event;
         jsglet.event.keyboard = keyboard;
         jsglet.app = app;
+        jsglet.image = image;
         jsglet.graphics = graphics;
         jsglet.graphics.sprite = sprite;
         jsglet.context = context;

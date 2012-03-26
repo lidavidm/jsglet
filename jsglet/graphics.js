@@ -118,6 +118,10 @@ define(["./common"], function(common) {
 
             mvpUniform: function() {
                 return this._active.mvpUniform();
+            },
+
+            textureUniform: function() {
+                return this._active.textureUniform();
             }
         }),
 
