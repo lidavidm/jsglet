@@ -39,6 +39,8 @@ define(["./common"], function(common) {
                     );
                     return;
                 }
+
+                this._shader = shader;
             }
         }),
 
