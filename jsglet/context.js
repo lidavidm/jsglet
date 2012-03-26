@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 define(
     ["./common", "./event", "./app", "./graphics", "./clock"],
     function(common, event, app, graphics, clock) {
