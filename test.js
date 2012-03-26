@@ -1,6 +1,8 @@
 require(["jsglet/core", "jsglet/context"], function(jsglet) {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.DEPTH_TEST);
     var program = new jsglet.graphics.Program(gl, {
         //"a_Color": jsglet.graphics.AttribRole.COLOR,
         "a_Texture": jsglet.graphics.AttribRole.TEXTURE,

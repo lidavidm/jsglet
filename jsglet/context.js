@@ -12,7 +12,10 @@ define(
             __init__: function(p_canvas) {
                 this.initEvent();
                 this._canvas = p_canvas;
-                this._context = this.gl = p_canvas.getContext('experimental-webgl');
+                this._context = this.gl = p_canvas.getContext('experimental-webgl', {
+                    premultipliedAlpha: false,
+                    alpha: false
+                });
                 this.width = parseInt(this._canvas.getAttribute("width"), 10);
                 this.height = parseInt(this._canvas.getAttribute("height"), 10);
                 this.program = new graphics.CompositeProgram(this.gl);
