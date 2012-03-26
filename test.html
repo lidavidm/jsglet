@@ -13,7 +13,9 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
         <script type="text/javascript" src="test.js"></script>
-                
+
+        <script id="vshadert" type="x-shader/x-vertex" src="shaders/vertex.vs"></script>
+        <script id="fshadert" type="x-shader/x-fragment" src="shaders/fragment.fs"></script>
         <script id="vshader" type="x-shader/x-vertex">
             uniform mat4 u_MVPMatrix;   // A constant representing the combined model/view/projection matrix.
 			
@@ -45,6 +47,7 @@
 
     </head>
     <body>
+        <img src="ship.png" />
         <button id="start">start</button>
         <canvas id="canvas" width="500" height="500"></canvas>
         <div id="fps"></div>

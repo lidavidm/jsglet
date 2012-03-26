@@ -49,6 +49,17 @@ define(
                 }
                 return new graphics.Shader(this.gl, shaderEl.type,
                                                   shaderEl.text);
+            },
+
+            loadShaderAjax: function(url, p_type, callback) {
+                $.get(url, function(data){
+                    var shader = new jsglet.graphics.Shader(
+                        this.gl,
+                        p_type,
+                        data
+                    );
+                    callback(shader);
+                });
             }
         }),
 
