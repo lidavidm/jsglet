@@ -19,15 +19,16 @@ require(["jsglet/core", "jsglet/context"], function(jsglet) {
             program.link();
             context.program.useProgram("basic");
             camera = new jsglet.context.Camera(context);
+        }).then(function() {
+            var textureD = jsglet.image.load(context.gl,
+                                             document.getElementById("texture").src,
+                                             program.textureUniform());
+            $.when(textureD).then(function(texture) {
+                s = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
+            });
         });
 
     var s = null;
-    var textureD = jsglet.image.load(context.gl,
-                                     document.getElementById("texture").src,
-                                     program.textureUniform());
-    $.when(textureD).then(function(texture) {
-        s = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
-    });
 
     function reshape() {
 	    gl.viewport(0, 0, context.width, context.height);
