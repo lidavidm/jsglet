@@ -60,7 +60,6 @@ define(
                         p_type,
                         data
                     );
-                    console.log(shader.gl);
                     deferred.resolve(shader);
                 }, this));
 
