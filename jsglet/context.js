@@ -20,7 +20,7 @@ define(
                 app.addContext(this);
 
                 // Event handling
-                bean.add(this._canvas, {
+                $(this._canvas).on({
                     mousedown: common.proxy(function(e) {
                         this.doMouseDown(e);
                     }, this),
@@ -29,8 +29,7 @@ define(
                         this.doMouseUp(e);
                     }, this)
                 });
-
-                bean.add(window, {
+                $(window).on({
                     keydown: common.proxy(function(e) {
                         this.doKeyDown(e);
                     }, this),
