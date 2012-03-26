@@ -47,21 +47,22 @@ define(
                     throw new common.error("shader: loadShader: Shader element",
                                            p_shaderId, "not found!");
                 }
-                return new jsglet.graphics.Shader(this.gl, shaderEl.type,
+                return new graphics.Shader(this.gl, shaderEl.type,
                                                   shaderEl.text);
             },
 
             loadShaderAjax: function(url, p_type) {
                 var deferred = new $.Deferred();
 
-                $.get(url, function(data){
-                    var shader = new jsglet.graphics.Shader(
+                $.get(url, common.proxy(function(data){
+                    var shader = new graphics.Shader(
                         this.gl,
                         p_type,
                         data
                     );
                     deferred.resolve(shader);
-                });
+                }, this));
+
                 return deferred.promise();
             }
         }),

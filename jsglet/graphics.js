@@ -3,6 +3,10 @@ define(["./common"], function(common) {
     var _FRAGMENT_SHADER = "x-shader/x-fragment";
 
     var module = {
+        VERTEX_SHADER: _VERTEX_SHADER,
+
+        FRAGMENT_SHADER: _FRAGMENT_SHADER,
+
         Shader: Class.$extend({
             __init__: function (gl, p_type, p_source) {
                 if (p_type == _VERTEX_SHADER) {
@@ -26,11 +30,15 @@ define(["./common"], function(common) {
                 );
                 if(!compiled && !gl.isContextLost()) {
                     var error = gl.getShaderInfoLog(shader);
-                    console.error("Error loading shader: " + error);
                     gl.deleteShader(shader);
+                    throw new common.error(
+                        "shader: Error loading shader",
+                        p_source,
+                        ":",
+                        error
+                    );
                     return;
                 }
-                this._shader = shader;
             }
         }),
 
