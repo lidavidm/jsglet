@@ -1,6 +1,6 @@
 define(
-    ["./common", "./event", "./app", "./graphics", "./clock"],
-    function(common, event, app, graphics, clock) {
+    ["./common", "./event", "./app", "./graphics"],
+    function(common, event, app, graphics) {
     var module = {
         Context: Class.$extend({
             __include__: [

@@ -23,8 +23,8 @@ require(["jsglet/core", "jsglet/context"], function(jsglet) {
             camera = new jsglet.context.Camera(context);
         }).then(function() {
             var textureD = jsglet.image.load(context.gl,
-                                             document.getElementById("texture").src,
-                                             program.textureUniform());
+                                             program.textureUniform(),
+                                             document.getElementById("texture").src);
             $.when(textureD).then(function(texture) {
                 s = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
             });

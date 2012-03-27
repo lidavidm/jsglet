@@ -124,7 +124,7 @@ define(["./common"], function(common) {
         }),
 
         getDefaultClock: function() {
-            if (_defaultClock === null) {
+            if (_defaultClock == null) {
                 _defaultClock = new module.Clock();
             }
             return _defaultClock;
