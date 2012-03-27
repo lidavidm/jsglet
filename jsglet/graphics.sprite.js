@@ -49,6 +49,22 @@ define(["./common", "./graphics"], function(common, graphics) {
                 }
             }),
 
+            position: common.property("position", {
+                get: function() {
+                    return [this._x, this._y];
+                },
+
+                set: function(p_x, p_y) {
+                    this._x = p_x;
+                    this._y = p_y;
+                    this._updateVertexBuffer();
+                }
+            }),
+
+            positionDelta: function(p_xD, p_yD) {
+                this.position(this._x + p_xD, this._y + p_yD);
+            },
+
             width: common.property("width", {
                 get: "default",
                 set: function(p_width) {

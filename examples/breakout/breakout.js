@@ -20,6 +20,8 @@ require(["jsglet/core"], function(jsglet) {
     ball = [],
     paddle = [];
 
+    var ballVelocity = [0, 10];
+
     $.when(
         context.loadShaderAjax("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
         context.loadShaderAjax("shaders/fragment.fs", jsglet.graphics.FRAGMENT_SHADER)
@@ -37,13 +39,15 @@ require(["jsglet/core"], function(jsglet) {
         }
 
         $.when(loadImage("sprites/brick.png")).then(function(texture) {
-            for (var row = 0; row < 3; row ++) {
-                var offsetCenter = (500 - (128 * (row + 1))) / 2;
-                for(var b = 0; b < row + 1; b++) {
+            var brickWidth = 64;
+            var brickHeight = 32;
+            for (var row = 0; row < 6; row ++) {
+                var offsetCenter = (500 - (brickWidth * (row + 3))) / 2;
+                for(var b = 0; b < row + 3; b++) {
                     var brick = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
-                    brick.y(500 - (row * 64));
-                    brick.x(offsetCenter + (128 * b));
-                    brick.size(128, 64);
+                    brick.y(500 - (row * brickHeight));
+                    brick.x(offsetCenter + (brickWidth * b));
+                    brick.size(brickWidth, brickHeight);
                     bricks.push(brick);
                 }
             }
@@ -92,5 +96,9 @@ require(["jsglet/core"], function(jsglet) {
         jsglet.clock.scheduleInterval(function() {
             fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
         }, 1000 / 30);
+
+        jsglet.clock.scheduleInterval(function() {
+            ball.positionDelta.apply(ball, ballVelocity);
+        }, 1000 / 20);
     };
 });
