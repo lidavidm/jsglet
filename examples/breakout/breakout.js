@@ -20,7 +20,7 @@ require(["jsglet/core"], function(jsglet) {
     ball = [],
     paddle = [];
 
-    var ballVelocity = [0, 10];
+    var ballVelocity = [0, -2];
 
     $.when(
         context.loadShaderAjax("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
@@ -98,7 +98,48 @@ require(["jsglet/core"], function(jsglet) {
         }, 1000 / 30);
 
         jsglet.clock.scheduleInterval(function() {
+            if (intersects.circleAABB({
+                x: ball.x(),
+                y: ball.y(),
+                r: ball.width() / 2
+            }, {
+                x: paddle.x(),
+                y: paddle.y(),
+                width: paddle.width(),
+                height: paddle.height()
+            })) {
+                if (ball.x() + ball.width() < paddle.x()) {
+                    ballVelocity[0] *= -1;
+                }
+                else if (ball.x() > (paddle.x() + paddle.width())) {
+                    ballVelocity[0] *= -1;
+                }
+                if (ballVelocity[1] < 0)
+                    ballVelocity[1] *= -1;
+            }
             ball.positionDelta.apply(ball, ballVelocity);
-        }, 1000 / 20);
+        }, 1000 / 30);
     };
 });
+
+var intersects = {
+    circleAABB: function(p_circle, p_aabb) {
+        // http://stackoverflow.com/a/402010/262727
+        var cdx = Math.abs(p_circle.x - p_aabb.x - p_aabb.width / 2);
+        var cdy = Math.abs(p_circle.y - p_aabb.y - p_aabb.height / 2);
+
+        if (cdx > (p_aabb.width / 2 + p_circle.r)) { return false; }
+        if (cdy > (p_aabb.height / 2 + p_circle.r)) { return false; }
+
+        if (cdx <= (p_aabb.width / 2)) { return true; }
+        if (cdy <= (p_aabb.height / 2)) { return true; }
+
+        var cd2 = Math.pow(cdx - p_aabb.width / 2, 2) +
+            Math.pow(cdy - p_aabb.height / 2, 2);
+
+        return (cd2 <= Math.pow(p_circle.r, 2));
+    },
+
+    aabbAABB: function(p_aabb1, p_aabb2) {
+    }
+}
