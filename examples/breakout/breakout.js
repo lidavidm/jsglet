@@ -12,8 +12,10 @@ require(["jsglet/core"], function(jsglet) {
     program.textureUniform("u_Texture");
     context.program.addProgram("basic", program);
 
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.disable(gl.DEPTH_TEST);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
 
     var camera = null,
     bricks = [],
@@ -74,10 +76,10 @@ require(["jsglet/core"], function(jsglet) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         camera.apply();
-        paddle.draw();
-        ball.draw();
 
         _.each(bricks, function(b) { b.draw(); });
+        paddle.draw();
+        ball.draw();
     }
 
     var fpsCounter = document.getElementById("fps");
