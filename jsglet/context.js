@@ -42,26 +42,6 @@ define(
                         this.doKeyUp(e);
                     }, this)
                 });
-            },
-
-            loadShader: function (p_shaderId) {
-                var shaderEl = document.getElementById(p_shaderId);
-                if (!shaderEl) {
-                    throw new common.error("shader: loadShader: Shader element",
-                                           p_shaderId, "not found!");
-                }
-                return new graphics.Shader(shaderEl.type, shaderEl.text);
-            },
-
-            loadShaderAjax: function(url, p_type) {
-                var deferred = new $.Deferred();
-
-                $.get(url, common.proxy(function(data){
-                    var shader = new graphics.Shader(p_type, data);
-                    deferred.resolve(shader);
-                }, this));
-
-                return deferred.promise();
             }
         }),
 

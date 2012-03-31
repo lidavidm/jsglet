@@ -275,6 +275,17 @@ define(["./common"], function(common) {
             });
 
             return result;
+        },
+
+        loadShader: function(url, p_type) {
+            var deferred = new $.Deferred();
+
+            $.get(url, common.proxy(function(data){
+                var shader = new module.Shader(p_type, data);
+                deferred.resolve(shader);
+            }, this));
+
+            return deferred.promise();
         }
     };
 

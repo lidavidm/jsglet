@@ -28,8 +28,8 @@ require(["jsglet/core"], function(jsglet) {
     var ballVelocity = [speed, -speed];
 
     $.when(
-        context.loadShaderAjax("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
-        context.loadShaderAjax("shaders/fragment.fs", jsglet.graphics.FRAGMENT_SHADER)
+        jsglet.graphics.loadShader("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
+        jsglet.graphics.loadShader("shaders/fragment.fs", jsglet.graphics.FRAGMENT_SHADER)
     ).then(function() {
         program.attachShader(arguments[0]);
         program.attachShader(arguments[1]);
