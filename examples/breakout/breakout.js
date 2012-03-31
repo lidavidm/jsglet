@@ -25,7 +25,7 @@ require(["jsglet/core"], function(jsglet) {
 
     var points = 0;
 
-    var ballVelocity = [speed / 2, -speed];
+    var ballVelocity = [speed, -speed];
 
     $.when(
         context.loadShaderAjax("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
@@ -46,7 +46,7 @@ require(["jsglet/core"], function(jsglet) {
         $.when(loadImage("sprites/brick.png")).then(function(texture) {
             var brickWidth = 64;
             var brickHeight = 32;
-            for (var row = 0; row < 2; row ++) {
+            for (var row = 0; row < 6; row ++) {
                 var offsetCenter = (500 - (brickWidth * (row + 3))) / 2;
                 for(var b = 0; b < row + 3; b++) {
                     var brick = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
@@ -61,9 +61,9 @@ require(["jsglet/core"], function(jsglet) {
         $.when(loadImage("sprites/ball.png")).then(function(texture) {
             ball = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
 
-            ball.size(64, 64);
+            ball.size(16, 16);
             ball.y(64);
-            ball.x(218);
+            ball.x(242);
         });
 
         $.when(loadImage("sprites/paddle.png")).then(function(texture) {
@@ -147,14 +147,15 @@ require(["jsglet/core"], function(jsglet) {
                         width: brick.width(),
                         height: brick.height()
                     })) {
-                        if (ballVelocity[1] > 0 &&
-                            ((ball.y() + ball.height()) < brick.y())) {
+                        console.log(ball.position(), brick.position(), ballVelocity)
+                        if (ballVelocity[1] > 0 && (ball.y() < brick.y())) {
                             ballVelocity[1] *= -1;
                         }
-                        else if (ballVelocity[1] < 0 &&
-                                 (ball.y() > (brick.y() + brick.height()))) {
+                        else if (ballVelocity[1] < 0 && (ball.y() > brick.y())) {
                             ballVelocity[1] *= -1;
                         }
+
+                        console.log(ballVelocity)
                         points += 10;
                         $("#points").html(points);
                         return true;
