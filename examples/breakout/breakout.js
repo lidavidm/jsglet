@@ -23,6 +23,8 @@ require(["jsglet/core"], function(jsglet) {
     paddle = [];
     var speed = 6;
 
+    var points = 0;
+
     var ballVelocity = [speed / 2, -speed];
 
     $.when(
@@ -44,11 +46,11 @@ require(["jsglet/core"], function(jsglet) {
         $.when(loadImage("sprites/brick.png")).then(function(texture) {
             var brickWidth = 64;
             var brickHeight = 32;
-            for (var row = 0; row < 6; row ++) {
+            for (var row = 0; row < 2; row ++) {
                 var offsetCenter = (500 - (brickWidth * (row + 3))) / 2;
                 for(var b = 0; b < row + 3; b++) {
                     var brick = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
-                    brick.y(500 - (row * brickHeight));
+                    brick.y(500 - ((row + 1) * brickHeight));
                     brick.x(offsetCenter + (brickWidth * b));
                     brick.size(brickWidth, brickHeight);
                     bricks.push(brick);
@@ -145,13 +147,25 @@ require(["jsglet/core"], function(jsglet) {
                         width: brick.width(),
                         height: brick.height()
                     })) {
-                        if (ballVelocity[1] > 0) {
+                        if (ballVelocity[1] > 0 &&
+                            ((ball.y() + ball.height()) < brick.y())) {
                             ballVelocity[1] *= -1;
                         }
+                        else if (ballVelocity[1] < 0 &&
+                                 (ball.y() > (brick.y() + brick.height()))) {
+                            ballVelocity[1] *= -1;
+                        }
+                        points += 10;
+                        $("#points").html(points);
                         return true;
                     }
                     return false;
-                })
+                });
+
+                if (bricks.length == 0) {
+                    document.write("You win!");
+                    jsglet.app.exit();
+                }
             }
 
             if (ballVelocity[0] > 0 && ball.x() + ball.width() > 500) {
@@ -161,7 +175,10 @@ require(["jsglet/core"], function(jsglet) {
                 ballVelocity[0] *= -1;
             }
 
-            if (ball.y() <= 0) {
+            if (ballVelocity[1] > 0 && ball.y() > 500) {
+                ballVelocity[1] *= -1;
+            }
+            else if (ball.y() <= 0) {
                 document.write("Game over");
                 jsglet.app.exit();
             }
