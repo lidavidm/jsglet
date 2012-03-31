@@ -1,10 +1,12 @@
 define(["./common"], function(common) {
 
     var Texture2D = Class.$extend({
-        __init__: function(gl, p_uniformLocation, p_browserImage) {
+        __init__: function(p_uniformLocation, p_browserImage) {
+            this.gl = common.gl;
+            var gl = common.gl;
             this._texture = gl.createTexture();
             this._textureHandle = p_uniformLocation;
-            this.gl = gl;
+
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
             gl.bindTexture(gl.TEXTURE_2D, this._texture);
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
@@ -31,11 +33,11 @@ define(["./common"], function(common) {
     return {
         Texture2D: Texture2D,
 
-        load: function(gl, p_uniformLocation, p_src) {
+        load: function(p_uniformLocation, p_src) {
             var image = new Image();
             var deferred = new $.Deferred();
             image.onload = function() {
-                var texture = new Texture2D(gl, p_uniformLocation, image);
+                var texture = new Texture2D(p_uniformLocation, image);
                 deferred.resolve(texture);
             }
             image.src = p_src;

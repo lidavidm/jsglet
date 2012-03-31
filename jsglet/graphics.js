@@ -8,7 +8,8 @@ define(["./common"], function(common) {
         FRAGMENT_SHADER: _FRAGMENT_SHADER,
 
         Shader: Class.$extend({
-            __init__: function (gl, p_type, p_source) {
+            __init__: function (p_type, p_source) {
+                var gl = common.gl;
                 if (p_type == _VERTEX_SHADER) {
                     var shaderType = gl.VERTEX_SHADER;
                 }
@@ -45,7 +46,8 @@ define(["./common"], function(common) {
         }),
 
         Program: Class.$extend({
-            __init__: function(gl, p_attribs) {
+            __init__: function(p_attribs) {
+                var gl = common.gl;
                 this.gl = gl;
                 this.program = gl.createProgram();
                 this.shaders = [];
@@ -101,8 +103,8 @@ define(["./common"], function(common) {
         }),
 
         CompositeProgram: Class.$extend({
-            __init__: function(gl) {
-                this.gl = gl;
+            __init__: function() {
+                this.gl = common.gl;
                 this._programs = {};
                 this._active = null;
             },
@@ -202,8 +204,8 @@ define(["./common"], function(common) {
                 }
             },
 
-            __init__: function(gl, p_renderingMethod) {
-                this.gl = gl;
+            __init__: function(p_renderingMethod) {
+                this.gl = common.gl;
                 this.bufferObjects = {};
                 this.renderingMethod = p_renderingMethod;
                 this.count = null;
@@ -265,8 +267,8 @@ define(["./common"], function(common) {
             }
         }),
 
-        buffer: function(gl, p_renderingMethod, p_buffers) {
-            var result = new module.MultiBufferObject(gl, p_renderingMethod);
+        buffer: function(p_renderingMethod, p_buffers) {
+            var result = new module.MultiBufferObject(p_renderingMethod);
 
             _.each(p_buffers, function(buffer) {
                 result.addBuffer(buffer[0], buffer[1]);

@@ -1,15 +1,14 @@
 define(["./common", "./graphics"], function(common, graphics) {
     var module = {
         Sprite: Class.$extend({
-            __init__: function(gl, p_texture, p_config) {
+            __init__: function(p_texture, p_config) {
                 this._texture = p_texture;
                 this._x = 0;
                 this._y = 0;
                 this._width = 1;
                 this._height = 1;
-                this.gl = gl;
+                this.gl = common.gl;
                 this._buffer = graphics.buffer(
-                    this.gl,
                     this.gl.TRIANGLE_STRIP,
                     [['v2f', new Float32Array([
                         this._x, this._y,

@@ -4,7 +4,7 @@ require.config({
 require(["jsglet/core"], function(jsglet) {
     var context = new jsglet.context.Context(document.getElementById("canvas"));
     var gl = context.gl;
-    var program = new jsglet.graphics.Program(gl, {
+    var program = new jsglet.graphics.Program({
         "a_Texture": jsglet.graphics.AttribRole.TEXTURE,
         "a_Position": jsglet.graphics.AttribRole.VERTEX
     });
@@ -40,7 +40,7 @@ require(["jsglet/core"], function(jsglet) {
         camera = new jsglet.context.Camera(context);
 
         var loadImage = function(src) {
-            return jsglet.image.load(context.gl, program.textureUniform(), src);
+            return jsglet.image.load(program.textureUniform(), src);
         }
 
         $.when(loadImage("sprites/brick.png")).then(function(texture) {
@@ -49,7 +49,7 @@ require(["jsglet/core"], function(jsglet) {
             for (var row = 0; row < 6; row ++) {
                 var offsetCenter = (500 - (brickWidth * (row + 3))) / 2;
                 for(var b = 0; b < row + 3; b++) {
-                    var brick = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
+                    var brick = new jsglet.graphics.sprite.Sprite(texture, {});
                     brick.y(500 - ((row + 1) * brickHeight));
                     brick.x(offsetCenter + (brickWidth * b));
                     brick.size(brickWidth, brickHeight);
@@ -59,7 +59,7 @@ require(["jsglet/core"], function(jsglet) {
         });
 
         $.when(loadImage("sprites/ball.png")).then(function(texture) {
-            ball = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
+            ball = new jsglet.graphics.sprite.Sprite(texture, {});
 
             ball.size(16, 16);
             ball.y(64);
@@ -67,7 +67,7 @@ require(["jsglet/core"], function(jsglet) {
         });
 
         $.when(loadImage("sprites/paddle.png")).then(function(texture) {
-            paddle = new jsglet.graphics.sprite.Sprite(context.gl, texture, {});
+            paddle = new jsglet.graphics.sprite.Sprite(texture, {});
 
             paddle.size(128, 64);
             paddle.x(188);

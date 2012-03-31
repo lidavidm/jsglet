@@ -16,6 +16,7 @@ define(
                     premultipliedAlpha: false,
                     alpha: false
                 });
+                common.gl = this.gl;
                 this.width = parseInt(this._canvas.getAttribute("width"), 10);
                 this.height = parseInt(this._canvas.getAttribute("height"), 10);
                 this.program = new graphics.CompositeProgram(this.gl);
@@ -49,19 +50,14 @@ define(
                     throw new common.error("shader: loadShader: Shader element",
                                            p_shaderId, "not found!");
                 }
-                return new graphics.Shader(this.gl, shaderEl.type,
-                                                  shaderEl.text);
+                return new graphics.Shader(shaderEl.type, shaderEl.text);
             },
 
             loadShaderAjax: function(url, p_type) {
                 var deferred = new $.Deferred();
 
                 $.get(url, common.proxy(function(data){
-                    var shader = new graphics.Shader(
-                        this.gl,
-                        p_type,
-                        data
-                    );
+                    var shader = new graphics.Shader(p_type, data);
                     deferred.resolve(shader);
                 }, this));
 
