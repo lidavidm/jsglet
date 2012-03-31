@@ -100,24 +100,43 @@ require(["jsglet/core"], function(jsglet) {
         }, 1000 / 30);
 
         jsglet.clock.scheduleInterval(function() {
-            if (intersects.circleAABB({
+            var ballColData = {
                 x: ball.x(),
                 y: ball.y(),
                 r: ball.width() / 2
-            }, {
+            };
+
+            if (intersects.circleAABB(ballColData, {
                 x: paddle.x(),
                 y: paddle.y(),
                 width: paddle.width(),
                 height: paddle.height()
             })) {
-                if (ball.x() + ball.width() < paddle.x()) {
+                if (ballVelocity[0] > 0 &&
+                    (ball.x() + ball.width() < paddle.x())) {
                     ballVelocity[0] *= -1;
                 }
-                else if (ball.x() > (paddle.x() + paddle.width())) {
+                else if (ballVelocity[0] < 0 &&
+                    (ball.x() > (paddle.x() + paddle.width()))) {
                     ballVelocity[0] *= -1;
                 }
-                if (ballVelocity[1] < 0)
+                if (ballVelocity[1] < 0) {
                     ballVelocity[1] *= -1;
+                }
+            }
+
+            else {
+                bricks = _.reject(bricks, function(brick) {
+                    if (intersects.circleAABB(ballColData, {
+                        x: brick.x(),
+                        y: brick.y(),
+                        width: brick.width(),
+                        height: brick.height()
+                    })) {
+                        return false;
+                    }
+                    return true;
+                })
             }
             ball.positionDelta.apply(ball, ballVelocity);
         }, 1000 / 30);
