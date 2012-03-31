@@ -21,8 +21,9 @@ require(["jsglet/core"], function(jsglet) {
     bricks = [],
     ball = [],
     paddle = [];
+    var speed = 6;
 
-    var ballVelocity = [0, -2];
+    var ballVelocity = [speed / 2, -speed];
 
     $.when(
         context.loadShaderAjax("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
@@ -86,10 +87,21 @@ require(["jsglet/core"], function(jsglet) {
 
     context.onDraw(draw);
 
+    var paddleVelocity = 0;
+
     context.onKeyDown(function(e) {
-        if (e.keyCode == jsglet.event.keyboard.KeyCode.UP) {
+        if (e.keyCode == jsglet.event.keyboard.KeyCode.LEFT) {
             e.preventDefault();
+            paddleVelocity = -speed;
         }
+        if (e.keyCode == jsglet.event.keyboard.KeyCode.RIGHT) {
+            e.preventDefault();
+            paddleVelocity = speed;
+        }
+    });
+
+    context.onKeyUp(function(e) {
+        paddleVelocity = 0;
     });
 
     document.getElementById("start").onclick = function() {
@@ -133,12 +145,29 @@ require(["jsglet/core"], function(jsglet) {
                         width: brick.width(),
                         height: brick.height()
                     })) {
-                        return false;
+                        if (ballVelocity[1] > 0) {
+                            ballVelocity[1] *= -1;
+                        }
+                        return true;
                     }
-                    return true;
+                    return false;
                 })
             }
+
+            if (ballVelocity[0] > 0 && ball.x() + ball.width() > 500) {
+                ballVelocity[0] *= -1;
+            }
+            else if (ballVelocity[0] < 0 && ball.x() < 0) {
+                ballVelocity[0] *= -1;
+            }
+
+            if (ball.y() <= 0) {
+                document.write("Game over");
+                jsglet.app.exit();
+            }
+
             ball.positionDelta.apply(ball, ballVelocity);
+            paddle.positionDelta.apply(paddle, [paddleVelocity, 0]);
         }, 1000 / 30);
     };
 });
