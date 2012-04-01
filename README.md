@@ -28,6 +28,8 @@ of Pyglet for Python. However, there are some important differences:
 
 ## Dependencies
 
-* Classy (http://classy.pocoo.org)
+* Classy (http://classy.pocoo.org) Use my fork at
+  https://github.com/lidavidm/classy instead since it contains some
+  additional patches needed
 * Underscore.js
 * gl-matrix (https://github.com/toji/gl-matrix)
