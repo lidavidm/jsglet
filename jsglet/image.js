@@ -27,6 +27,10 @@ define(["./common"], function(common) {
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this._texture);
             this.gl.uniform1i(this._textureHandle, 0);
+        },
+
+        unbind: function() {
+            this.gl.bindTexture(this.gl.TEXTURE_2D, 0);
         }
     });
 

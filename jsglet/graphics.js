@@ -2,6 +2,54 @@ define(["./common"], function(common) {
     var _VERTEX_SHADER = "x-shader/x-vertex";
     var _FRAGMENT_SHADER = "x-shader/x-fragment";
 
+    var Group = Class.$extend({
+        __init__: function(p_parent) {
+            this.parent = p_parent || null;
+        },
+
+        __repr__: function() {
+            return "Group";
+        },
+
+        set: function() {
+        },
+
+        unset: function() {
+        }
+    });
+
+    var NullGroup = Group.$extend({
+        __repr__: function() {
+            return "NullGroup";
+        }
+    });
+
+    var OrderedGroup = Group.$extend({
+        __init__: function(p_order, p_parent) {
+            this.$super(p_parent);
+            this.order = p_order;
+        },
+
+        __repr__: function() {
+            return "OrderedGroup";
+        }
+    });
+
+    var TextureGroup = Group.$extend({
+        __init__: function(p_texture, p_parent) {
+            this.$super(p_parent);
+            this.texture = texture;
+        },
+
+        set: function() {
+            this.texture.bind();
+        },
+
+        unset: function() {
+            this.texture.unbind();
+        }
+    });
+
     var module = {
         VERTEX_SHADER: _VERTEX_SHADER,
 
@@ -195,8 +243,6 @@ define(["./common"], function(common) {
             }
         },
 
-        Batch: Class.$extend({}),
-
         MultiBufferObject: Class.$extend({
             __classvars__: {
                 BUFFER_USAGE: {
@@ -266,6 +312,49 @@ define(["./common"], function(common) {
                 return this.gl[this.$class.BUFFER_USAGE[p_usage]];
             }
         }),
+
+        Batch: Class.$extend({
+            __init__: function() {
+                this._mbos = [];
+                this._groups = [];
+                this._groups_top = [];
+                this._group_children = {};
+            },
+
+            add: function(p_renderingMethod, p_buffers, p_group) {
+                var buffer = module.buffer(p_renderingMethod, p_buffers);
+                this._mbos.push(buffer);
+                this._addGroup(p_group);
+                return buffer;
+            },
+
+            draw: function() {
+                _.each(this._mbos, function(mbo) { mbo.draw(); });
+            },
+
+            _addGroup: function(p_group) {
+                if (p_group == null || undefined == p_group) {
+                    p_group = new module.NullGroup();
+                }
+                this._groups.push(p_group);
+                if (p_group.parent == null) {
+                    this._groups_top.push(p_group);
+                }
+                else {
+                    if (!_.include(this._groups, p_group.parent)) {
+                        this._addGroup(p_group.parent);
+                    }
+                    if (!_.has(this._group_children, p_group.parent)) {
+                        this._group_children[p_group.parent] = [];
+                    }
+                    this._group_children[p_group.parent].push(p_group);
+                }
+            }
+        }),
+
+        Group: Group,
+
+        NullGroup: NullGroup,
 
         buffer: function(p_renderingMethod, p_buffers) {
             var result = new module.MultiBufferObject(p_renderingMethod);

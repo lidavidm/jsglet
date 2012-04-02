@@ -8,23 +8,36 @@ define(["./common", "./graphics"], function(common, graphics) {
                 this._width = 1;
                 this._height = 1;
                 this.gl = common.gl;
-                this._buffer = graphics.buffer(
-                    this.gl.TRIANGLE_STRIP,
-                    [['v2f', new Float32Array([
+
+                var vertexData = [
+                    ['v2f', new Float32Array([
                         this._x, this._y,
                         this._x + this._width, this._y,
                         this._x + this._width, this._y + this._height,
                         this._x, this._y,
-                        this._x, this._y + this._height
-                    ])],
-                     ['t2f', new Float32Array([
+                        this._x, this._y + this._height])],
+                    ['t2f',
+                     new Float32Array([
                          0, 0,
                          1, 0,
                          1, 1,
                          0, 0,
                          0, 1
-                     ])]]
-                );
+                     ])]
+                ];
+
+                if (_.has(p_config, 'batch')) {
+                    this._buffer = p_config.batch.add(
+                        this.gl.TRIANGLE_STRIP,
+                        vertexData,
+                        new graphics.TextureGroup(this._texture)
+                    );
+                }
+                else {
+                    this._buffer = graphics.buffer(
+                        this.gl.TRIANGLE_STRIP, vertexData
+                    );
+                }
             },
 
             draw: function() {
