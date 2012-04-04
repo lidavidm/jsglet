@@ -5,7 +5,6 @@ define(["./common"], function(common) {
     var Group = Class.$extend({
         __init__: function(p_parent) {
             this.parent = p_parent || null;
-            this.toString = this.__repr__;
         },
 
         __repr__: function() {
