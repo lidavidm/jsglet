@@ -30,7 +30,7 @@ define(["./common", "./graphics"], function(common, graphics) {
                     this._buffer = p_config.batch.add(
                         this.gl.TRIANGLE_STRIP,
                         vertexData,
-                        new graphics.TextureGroup(this._texture)
+                        this._texture.getGroup()
                     );
                 }
                 else {

@@ -1,4 +1,4 @@
-define(["./common"], function(common) {
+define(["./common", "./graphics"], function(common, graphics) {
 
     var Texture2D = Class.$extend({
         __init__: function(p_uniformLocation, p_browserImage) {
@@ -17,10 +17,20 @@ define(["./common"], function(common) {
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
             gl.generateMipmap(gl.TEXTURE_2D);
             gl.bindTexture(gl.TEXTURE_2D, null);
+
+            this._group = null;
+            this._name = p_browserImage.src;
         },
 
         getTexture: function() {
             return this;
+        },
+
+        getGroup: function() {
+            if (this._group == null) {
+                this._group = new graphics.TextureGroup(this);
+            }
+            return this._group;
         },
 
         bind: function() {
@@ -29,8 +39,8 @@ define(["./common"], function(common) {
             this.gl.uniform1i(this._textureHandle, 0);
         },
 
-        unbind: function() {
-            this.gl.bindTexture(this.gl.TEXTURE_2D, 0);
+        __repr__: function() {
+            return "Texture2D " + this._name;
         }
     });
 

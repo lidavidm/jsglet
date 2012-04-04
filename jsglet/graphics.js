@@ -5,6 +5,7 @@ define(["./common"], function(common) {
     var Group = Class.$extend({
         __init__: function(p_parent) {
             this.parent = p_parent || null;
+            this.toString = this.__repr__;
         },
 
         __repr__: function() {
@@ -31,24 +32,26 @@ define(["./common"], function(common) {
         },
 
         __repr__: function() {
-            return "OrderedGroup";
+            return "OrderedGroup " + this.order;
         }
     });
 
     var TextureGroup = Group.$extend({
         __init__: function(p_texture, p_parent) {
             this.$super(p_parent);
-            this.texture = texture;
+            this.texture = p_texture;
         },
 
         set: function() {
             this.texture.bind();
         },
 
-        unset: function() {
-            this.texture.unbind();
+        __repr__: function() {
+            return "TextureGroup " + this.texture._name;
         }
     });
+
+    var NULL_GROUP = new NullGroup();
 
     var module = {
         VERTEX_SHADER: _VERTEX_SHADER,
@@ -319,28 +322,65 @@ define(["./common"], function(common) {
                 this._groups = [];
                 this._groups_top = [];
                 this._group_children = {};
+                this._group_buffers = {};
             },
 
             add: function(p_renderingMethod, p_buffers, p_group) {
                 var buffer = module.buffer(p_renderingMethod, p_buffers);
                 this._mbos.push(buffer);
-                this._addGroup(p_group);
+                var group = this._addGroup(p_group);
+                if (!_.has(this._group_buffers, group)) {
+                    this._group_buffers[group] = [];
+                }
+                this._group_buffers[group].push(buffer);
                 return buffer;
             },
 
             draw: function() {
-                _.each(this._mbos, function(mbo) { mbo.draw(); });
+                _.each(this._draw_list, function(f) { f(); });
+            },
+
+            build: function() {
+                var visit = function(group) {
+                    var drawCalls = _.map(
+                        this._group_buffers[group],
+                        function(bo) {
+                            return function() {
+                                bo.draw();
+                            };
+                        }
+                    );
+
+                    var children = this._group_children[group];
+
+                    if (children) {
+                        _.each(children, function(c) {
+                            Array.prototype.push.apply(drawCalls, visit.call(this, c));
+                        });
+                    }
+                    var calls = [function() { group.set(); }];
+                    Array.prototype.push.apply(calls, drawCalls);
+                    calls.push(function() { group.unset(); });
+                    return calls;
+                };
+
+                this._draw_list = [];
+                _.each(this._groups_top, function(g) {
+                    Array.prototype.push.apply(this._draw_list, visit.call(this, g));
+                }, this);
             },
 
             _addGroup: function(p_group) {
                 if (p_group == null || undefined == p_group) {
-                    p_group = new module.NullGroup();
+                    p_group = NULL_GROUP;
                 }
-                this._groups.push(p_group);
-                if (p_group.parent == null) {
-                    this._groups_top.push(p_group);
+                if (!_.include(this._groups, p_group)) {
+                    this._groups.push(p_group);
+                    if (p_group.parent == null) {
+                        this._groups_top.push(p_group);
+                    }
                 }
-                else {
+                else if (p_group.parent) {
                     if (!_.include(this._groups, p_group.parent)) {
                         this._addGroup(p_group.parent);
                     }
@@ -349,12 +389,18 @@ define(["./common"], function(common) {
                     }
                     this._group_children[p_group.parent].push(p_group);
                 }
+
+                return p_group;
             }
         }),
 
         Group: Group,
 
         NullGroup: NullGroup,
+
+        OrderedGroup: OrderedGroup,
+
+        TextureGroup: TextureGroup,
 
         buffer: function(p_renderingMethod, p_buffers) {
             var result = new module.MultiBufferObject(p_renderingMethod);
