@@ -312,6 +312,16 @@ define(["./common"], function(common) {
 
             bufferUsage: function(p_usage) {
                 return this.gl[this.$class.BUFFER_USAGE[p_usage]];
+            },
+
+            del: function() {
+                for (var role in this.bufferObjects) {
+                    if (this.bufferObjects.hasOwnProperty(role)) {
+                        var data = this.bufferObjects[role];
+                        this.gl.deleteBuffer(data.buffer);
+                    }
+                }
+                this.bufferObjects = {};
             }
         }),
 

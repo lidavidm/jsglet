@@ -22,8 +22,8 @@ require(["jsglet/core"], function(jsglet) {
 
     var camera = null,
     bricks = [],
-    ball = [],
-    paddle = [];
+    ball = null,
+    paddle = null;
     var speed = 6;
 
     var points = 0;
@@ -161,7 +161,6 @@ require(["jsglet/core"], function(jsglet) {
                         width: brick.width(),
                         height: brick.height()
                     })) {
-                        console.log(ball.position(), brick.position(), ballVelocity)
                         if (ballVelocity[1] > 0 && (ball.y() < brick.y())) {
                             ballVelocity[1] *= -1;
                         }
@@ -169,9 +168,10 @@ require(["jsglet/core"], function(jsglet) {
                             ballVelocity[1] *= -1;
                         }
 
-                        console.log(ballVelocity)
                         points += 10;
                         $("#points").html(points);
+                        console.log(brick);
+                        brick.del();
                         return true;
                     }
                     return false;

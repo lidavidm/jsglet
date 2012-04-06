@@ -45,6 +45,10 @@ define(["./common", "./graphics"], function(common, graphics) {
                 this._buffer.draw();
             },
 
+            del: function() {
+                this._buffer.del();
+            },
+
             x: common.property("x", {
                 get: "default",
                 set: function(p_x) {
