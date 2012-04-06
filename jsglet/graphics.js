@@ -257,6 +257,7 @@ define(["./common"], function(common) {
                 this.bufferObjects = {};
                 this.renderingMethod = p_renderingMethod;
                 this.count = null;
+                this.deleted = false;
             },
 
             addBuffer: function(p_attribute, p_data) {
@@ -322,6 +323,7 @@ define(["./common"], function(common) {
                     }
                 }
                 this.bufferObjects = {};
+                this.deleted = true;
             }
         }),
 
@@ -351,14 +353,19 @@ define(["./common"], function(common) {
 
             build: function() {
                 var visit = function(group) {
-                    var drawCalls = _.map(
+                    var drawCalls = _.reject(_.map(
                         this._group_buffers[group],
                         function(bo) {
-                            return function() {
-                                bo.draw();
-                            };
+                            if (!bo.deleted) {
+                                return function() {
+                                    bo.draw();
+                                };
+                            }
+                            else {
+
+                            }
                         }
-                    );
+                    ), _.isUndefined);
 
                     var children = this._group_children[group];
 

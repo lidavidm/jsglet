@@ -170,12 +170,13 @@ require(["jsglet/core"], function(jsglet) {
 
                         points += 10;
                         $("#points").html(points);
-                        console.log(brick);
                         brick.del();
                         return true;
                     }
                     return false;
                 });
+
+                batch.build();
 
                 if (bricks.length == 0) {
                     document.write("You win!");
