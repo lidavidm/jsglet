@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Jsglet by lidavidm</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/lidavidm/jsglet">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/lidavidm/jsglet/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/lidavidm/jsglet/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Jsglet</h1>
+          <p>WebGL toolkit</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/lidavidm">lidavidm</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h3>About</h3>
+
+<p>A WebGL toolkit that simplifies common objects such as buffers and contexts, in the style of <a href="http://www.pyglet.org">Pyglet</a> for Python.</p>
+
+<h3>Status</h3>
+
+<p>Still under heavy development.</p>
+
+<h3>Example</h3>
+
+<pre><code>require(['jsglet/core'], function(jsglet) {
+    var context = new jsglet.context.Context(document.getElementById("context"));
+    var gl = context.gl;
+    var program = new jsglet.graphics.Program({
+        "a_Texture": jsglet.graphics.AttribRole.TEXTURE,
+        "a_Position": jsglet.graphics.AttribRole.VERTEX
+    });
+    program.mvpUniform("u_MVPMatrix");
+    program.textureUniform("u_Texture");
+    context.program.addProgram("basic", program);
+
+    var camera = null;
+
+    $.when(
+        jsglet.graphics.loadShader("shaders/vertex.vs", jsglet.graphics.VERTEX_SHADER),
+        jsglet.graphics.loadShader("shaders/fragment.fs", jsglet.graphics.FRAGMENT_SHADER)
+    ).then(function() {
+        program.attachShader(arguments[0]);
+        program.attachShader(arguments[1]);
+        program.link();
+        context.program.useProgram("basic");
+        camera = new jsglet.context.Camera(context);
+    });
+
+    function draw() {
+    gl.viewport(0, 0, context.width, context.height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        camera.apply();
+    }
+    context.onDraw(draw);
+
+    var fpsCounter = document.getElementById("fps");
+
+    document.getElementById("start").onclick = function() {
+        jsglet.app.run();
+
+        jsglet.clock.scheduleInterval(function() {
+            fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
+        }, 1000 / 30);
+    };
+});
+</code></pre>
+
+<h3>Get It</h3>
+
+<pre><code>git clone git://github.com/lidavidm/jsglet.git
+</code></pre>
+
+<p>You'll need require.js, jQuery, Classy (from <a href="https://github.com/lidavidm/classy">my fork</a>), gl-matrix, and Underscore.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
