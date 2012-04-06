@@ -126,6 +126,8 @@
       proper_this.$class = rv;
       if (proper_this.__init__)
         proper_this.__init__.apply(proper_this, arguments);
+      if (proper_this.__proto__.__repr__)
+        proper_this.toString = proper_this.__proto__.__repr__
       return proper_this;
     }
 
@@ -142,8 +144,8 @@
     rv.constructor = rv;
     rv.$extend = Class.$extend;
     rv.$withData = Class.$withData;
-    if (properties.hasOwnProperty('__repr__'))
-      rv.toString = properties.__str__;
+    if (properties.hasOwnProperty('__repr_class__'))
+      rv.toString = properties.__repr_class__;
     return rv;
   };
 
