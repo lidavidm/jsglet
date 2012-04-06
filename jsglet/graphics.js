@@ -355,16 +355,17 @@ define(["./common"], function(common) {
                 var visit = function(group) {
                     var drawCalls = _.reject(_.map(
                         this._group_buffers[group],
-                        function(bo) {
+                        common.proxy(function(bo, index) {
                             if (!bo.deleted) {
                                 return function() {
                                     bo.draw();
                                 };
                             }
                             else {
-
+                                delete this._mbos[_.indexOf(this._mbos, bo)];
+                                delete this._group_buffers[group][index];
                             }
-                        }
+                        }, this)
                     ), _.isUndefined);
 
                     var children = this._group_children[group];
