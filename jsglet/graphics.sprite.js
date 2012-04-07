@@ -1,8 +1,25 @@
-define(["./common", "./graphics"], function(common, graphics) {
+define(["./common", "./graphics", "./image"], function(common, graphics, image) {
     var module = {
         Sprite: Class.$extend({
             __init__: function(p_texture, p_config) {
-                this._texture = p_texture;
+                if (p_texture instanceof image.Animation) {
+                    this._animation = p_texture;
+                    this._texture = p_texture.current();
+                    this._animation.onFrameChange(common.proxy(function() {
+                        this._texture = this._animation.current();
+                        var tCoords = this._texture.getTexCoords();
+                        this._buffer.updateTexture(new Float32Array(_.flatten([
+                            tCoords[0],
+                            tCoords[1],
+                            tCoords[2],
+                            tCoords[0],
+                            tCoords[3]
+                        ])));
+                    }, this));
+                }
+                else {
+                    this._texture = p_texture;
+                }
                 this._x = 0;
                 this._y = 0;
                 this._width = 1;

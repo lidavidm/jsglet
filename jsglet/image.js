@@ -1,4 +1,4 @@
-define(["./common", "./graphics"], function(common, graphics) {
+define(["./common", "./graphics", "./event"], function(common, graphics, event) {
 
     var Texture2D = Class.$extend({
         __init__: function(p_uniformLocation, p_browserImage) {
@@ -90,13 +90,16 @@ define(["./common", "./graphics"], function(common, graphics) {
         },
 
         getRegion: function(p_x, p_y) {
+            /// TODO cache these views
             var x = (1 + p_x) / this._columns;
             var y = (1 + p_y) / this._rows;
+            var w = 1 / this._columns;
+            var h = 1 / this._rows;
             return new TextureView(this, [
-                [0, 0],
-                [x, 0],
+                [x - w, y - h],
+                [x, y - h],
                 [x, y],
-                [0, y]
+                [x - w, y]
             ]);
         },
 
@@ -106,7 +109,12 @@ define(["./common", "./graphics"], function(common, graphics) {
     });
 
     var Animation = Class.$extend({
+        __include__: [
+            event.EventDispatcherMixin("frameChange")
+        ],
+
         __init__: function(p_tgrid) {
+            this.initEvent();
             this._tgrid = p_tgrid;
             this._x = 0;
             this._y = 0;
@@ -123,7 +131,7 @@ define(["./common", "./graphics"], function(common, graphics) {
             if (this._y >= this._maxY) {
                 this._y = 0;
             }
-            return this.current();
+            this.doFrameChange();
         },
 
         prev: function() {
@@ -135,13 +143,13 @@ define(["./common", "./graphics"], function(common, graphics) {
             if (this._y <= 0) {
                 this._y = this._maxY - 1;
             }
-            return this.current();
+            this.doFrameChange();
         },
 
         reset: function() {
             this._x = 0;
             this._y = 0;
-            return this.current();
+            this.doFrameChange();
         },
 
         current: function() {

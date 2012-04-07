@@ -21,6 +21,7 @@ require(["jsglet/core"], function(jsglet) {
 
     var camera = null;
     var batch = new jsglet.graphics.Batch();
+    var animation = null;
     var blinker = null;
 
     $.when(jsglet.graphics.loadShader("resources/shaders/vertex.vs",
@@ -40,9 +41,10 @@ require(["jsglet/core"], function(jsglet) {
         }
 
         $.when(loadImage("resources/textures/blinker.png")).then(function(texture) {
-            blinker = new jsglet.graphics.sprite.Sprite(texture.getRegion(0, 0), {
-                batch: batch
-            });
+            animation = new jsglet.image.Animation(texture);
+            blinker = new jsglet.graphics.sprite.Sprite(
+                animation, { batch: batch }
+            );
             blinker.size(32, 32);
             blinker.x(0);
             blinker.y(0);
@@ -68,5 +70,9 @@ require(["jsglet/core"], function(jsglet) {
         jsglet.clock.scheduleInterval(function() {
             fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
         }, 1000 / 30);
+
+        $("#nextFrame").click(function() {
+            animation.next();
+        });
     };
 });
