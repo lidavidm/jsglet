@@ -106,12 +106,46 @@ define(["./common", "./graphics"], function(common, graphics) {
     });
 
     var Animation = Class.$extend({
-        /**
-           @constructor
-           @param {Animation|Texture2D[]} p_sequence An animation or
-           sequence of textures to use as the animation.
-         */
-        __init__: function(p_sequence) {
+        __init__: function(p_tgrid) {
+            this._tgrid = p_tgrid;
+            this._x = 0;
+            this._y = 0;
+            this._maxX = p_tgrid._columns;
+            this._maxY = p_tgrid._rows;
+        },
+
+        next: function() {
+            this._x += 1;
+            if (this._x >= this._maxX) {
+                this._x = 0;
+                this._y += 1;
+            }
+            if (this._y >= this._maxY) {
+                this._y = 0;
+            }
+            return this.current();
+        },
+
+        prev: function() {
+            this._x -= 1;
+            if (this._x <= 0) {
+                this._x = this._maxX - 1;
+                this._y -= 1;
+            }
+            if (this._y <= 0) {
+                this._y = this._maxY - 1;
+            }
+            return this.current();
+        },
+
+        reset: function() {
+            this._x = 0;
+            this._y = 0;
+            return this.current();
+        },
+
+        current: function() {
+            return this._tgrid.getRegion(this._x, this._y);
         }
     });
 
@@ -122,7 +156,6 @@ define(["./common", "./graphics"], function(common, graphics) {
             var args =  _.toArray(arguments);
             image.onload = function() {
                 args[1] = image;
-                console.log(args)
                 var texture = p_ctor.apply(null, args);
                 deferred.resolve(texture);
             }

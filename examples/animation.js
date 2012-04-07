@@ -20,6 +20,8 @@ require(["jsglet/core"], function(jsglet) {
     gl.enable(gl.BLEND);
 
     var camera = null;
+    var batch = new jsglet.graphics.Batch();
+    var blinker = null;
 
     $.when(jsglet.graphics.loadShader("resources/shaders/vertex.vs",
                                       jsglet.graphics.VERTEX_SHADER),
@@ -38,8 +40,33 @@ require(["jsglet/core"], function(jsglet) {
         }
 
         $.when(loadImage("resources/textures/blinker.png")).then(function(texture) {
-            console.log(texture);
-            console.log(texture.getRegion(0, 0).getTexCoords())
+            blinker = new jsglet.graphics.sprite.Sprite(texture.getRegion(0, 0), {
+                batch: batch
+            });
+            blinker.size(32, 32);
+            blinker.x(0);
+            blinker.y(0);
+            batch.build();
         });
     });
+
+    function draw() {
+	    gl.viewport(0, 0, context.width, context.height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        camera.apply();
+
+        batch.draw();
+    }
+    context.onDraw(draw);
+
+    var fpsCounter = document.getElementById("fps");
+
+    document.getElementById("start").onclick = function() {
+        jsglet.app.run();
+
+        jsglet.clock.scheduleInterval(function() {
+            fpsCounter.innerText = Math.round(jsglet.clock.getDefaultClock().getFps());
+        }, 1000 / 30);
+    };
 });

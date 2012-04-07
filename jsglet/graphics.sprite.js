@@ -9,6 +9,8 @@ define(["./common", "./graphics"], function(common, graphics) {
                 this._height = 1;
                 this.gl = common.gl;
 
+                var tCoords = this._texture.getTexCoords();
+
                 var vertexData = [
                     ['v2f', new Float32Array([
                         this._x, this._y,
@@ -16,14 +18,13 @@ define(["./common", "./graphics"], function(common, graphics) {
                         this._x + this._width, this._y + this._height,
                         this._x, this._y,
                         this._x, this._y + this._height])],
-                    ['t2f',
-                     new Float32Array([
-                         0, 0,
-                         1, 0,
-                         1, 1,
-                         0, 0,
-                         0, 1
-                     ])]
+                    ['t2f', new Float32Array(_.flatten([
+                         tCoords[0],
+                         tCoords[1],
+                         tCoords[2],
+                         tCoords[0],
+                         tCoords[3]
+                     ]))]
                 ];
 
                 if (_.has(p_config, 'batch')) {
