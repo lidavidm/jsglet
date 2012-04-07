@@ -74,5 +74,19 @@ require(["jsglet/core"], function(jsglet) {
         $("#nextFrame").click(function() {
             animation.next();
         });
+
+        var callbackId = null;
+
+        $("#toggle").click(function() {
+            if (_.isNull(callbackId)) {
+                callbackId = jsglet.clock.scheduleInterval(function() {
+                    animation.next();
+                }, 250);
+            }
+            else {
+                jsglet.clock.unschedule(callbackId);
+                callbackId = null;
+            }
+        });
     };
 });
