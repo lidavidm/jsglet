@@ -85,13 +85,13 @@ define(["./common", "./graphics"], function(common, graphics) {
             this._columns = p_columns;
             this._width = p_browserImage.width;
             this._height = p_browserImage.height;
-            this._tilesX = Math.floor(this._width / this._columns);
-            this._tilesY = Math.floor(this._height / this._rows);
+            this._tileW = Math.floor(this._width / this._columns);
+            this._tileH = Math.floor(this._height / this._rows);
         },
 
         getRegion: function(p_x, p_y) {
-            var x = p_x / this._tilesX;
-            var y = p_y / this._tilesY;
+            var x = (1 + p_x) / this._columns;
+            var y = (1 + p_y) / this._rows;
             return new TextureView(this, [
                 [0, 0],
                 [x, 0],
@@ -101,12 +101,35 @@ define(["./common", "./graphics"], function(common, graphics) {
         },
 
         __repr__: function() {
-            return "TextureGrid " + this._rows " by " + this._columns +
-                this._texture._name;
+            return "TextureGrid " + this._rows + " by " + this._columns + this._texture._name;
         }
     });
 
-    var Animation = Class.$extend({});
+    var Animation = Class.$extend({
+        /**
+           @constructor
+           @param {Animation|Texture2D[]} p_sequence An animation or
+           sequence of textures to use as the animation.
+         */
+        __init__: function(p_sequence) {
+        }
+    });
+
+    var loader = function(p_ctor) {
+        return function(p_uniformLocation, p_src) {
+            var image = new Image();
+            var deferred = new $.Deferred();
+            var args =  _.toArray(arguments);
+            image.onload = function() {
+                args[1] = image;
+                console.log(args)
+                var texture = p_ctor.apply(null, args);
+                deferred.resolve(texture);
+            }
+            image.src = p_src;
+            return deferred.promise();
+        }
+    }
 
     return {
         Texture2D: Texture2D,
@@ -114,15 +137,12 @@ define(["./common", "./graphics"], function(common, graphics) {
         TextureGrid: TextureGrid,
         Animation: Animation,
 
-        load: function(p_uniformLocation, p_src) {
-            var image = new Image();
-            var deferred = new $.Deferred();
-            image.onload = function() {
-                var texture = new Texture2D(p_uniformLocation, image);
-                deferred.resolve(texture);
-            }
-            image.src = p_src;
-            return deferred.promise();
-        }
+        load: loader(function(p_uniformLocation, p_image) {
+            return new Texture2D(p_uniformLocation, p_image);
+        }),
+
+        loadGrid: loader(function(p_uL, p_image, p_rows, p_cols) {
+            return new TextureGrid(p_uL, p_image, p_rows, p_cols);
+        })
     }
 });
