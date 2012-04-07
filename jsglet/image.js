@@ -33,6 +33,10 @@ define(["./common", "./graphics"], function(common, graphics) {
             return this._group;
         },
 
+        getTexCoords: function() {
+            return [[0, 0], [1,0], [1, 1], [0, 1]];
+        },
+
         bind: function() {
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this._texture);
@@ -44,8 +48,71 @@ define(["./common", "./graphics"], function(common, graphics) {
         }
     });
 
+    var TextureView = Texture2D.$extend({
+        __init__: function(p_texture, p_texcoords) {
+            this._texture = p_texture;
+            this._texcoords = p_texcoords;
+        },
+
+        getTexture: function() {
+            return this._texture;
+        },
+
+        getGroup: function() {
+            return this._texture.getGroup();
+        },
+
+        getTexCoords: function() {
+            return this._texcoords;
+        },
+
+        bind: function() {
+            this._texture.bind();
+        },
+
+        __repr__: function() {
+            return "TextureView " + this._texture._name;
+        }
+    });
+
+    var TextureGrid = Texture2D.$extend({
+        __init__: function(
+            p_uniformLocation, p_browserImage,
+            p_rows, p_columns
+        ) {
+            this.$super(p_uniformLocation, p_browserImage);
+            this._rows = p_rows;
+            this._columns = p_columns;
+            this._width = p_browserImage.width;
+            this._height = p_browserImage.height;
+            this._tilesX = Math.floor(this._width / this._columns);
+            this._tilesY = Math.floor(this._height / this._rows);
+        },
+
+        getRegion: function(p_x, p_y) {
+            var x = p_x / this._tilesX;
+            var y = p_y / this._tilesY;
+            return new TextureView(this, [
+                [0, 0],
+                [x, 0],
+                [x, y],
+                [0, y]
+            ]);
+        },
+
+        __repr__: function() {
+            return "TextureGrid " + this._rows " by " + this._columns +
+                this._texture._name;
+        }
+    });
+
+    var Animation = Class.$extend({});
+
     return {
         Texture2D: Texture2D,
+        TextureView: TextureView,
+        TextureGrid: TextureGrid,
+        Animation: Animation,
 
         load: function(p_uniformLocation, p_src) {
             var image = new Image();
