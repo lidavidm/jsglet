@@ -343,7 +343,7 @@ define(["./common"], function(common) {
                 if (!_.include(_.keys(this._group_buffers), group)) {
                     this._group_buffers[group] = [];
                 }
-                console.log(group)
+
                 this._group_buffers[group].push(buffer);
                 return buffer;
             },
@@ -387,7 +387,6 @@ define(["./common"], function(common) {
                 _.each(this._groups_top, function(g) {
                     Array.prototype.push.apply(this._draw_list, visit.call(this, g));
                 }, this);
-                console.log(this._draw_list)
             },
 
             _addGroup: function(p_group) {

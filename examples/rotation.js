@@ -73,8 +73,10 @@ require(["jsglet/core"], function(jsglet) {
             blinker.x(150);
             blinker.y(150);
 
+            blinker2Group = new RotationGroup(camera);
+
             blinker2 = new jsglet.graphics.sprite.Sprite(
-                animation, { batch: batch }
+                animation, { batch: batch, group: blinker2Group }
             );
             blinker2.size(32, 32);
             blinker2.x(50);
@@ -110,6 +112,10 @@ require(["jsglet/core"], function(jsglet) {
             blinkerGroup.angle += Math.PI / 8;
             blinkerGroup.x = blinker.x();
             blinkerGroup.y = blinker.y();
+
+            blinker2Group.angle += Math.PI / 4;
+            blinker2Group.x = blinker2.x()// - (blinker2.width() / 2);
+            blinker2Group.y = blinker2.y()// - (blinker2.height() / 2);
         }, 50);
     };
 });
