@@ -45,10 +45,17 @@ define(["./common", "./graphics", "./image"], function(common, graphics, image) 
                 ];
 
                 if (_.has(p_config, 'batch')) {
+                    var group = this._texture.getGroup();
+
+                    if (_.has(p_config, 'group')) {
+                        group = this._texture.getGroup(true);
+                        group.parent = p_config['group'];
+                    }
+
                     this._buffer = p_config.batch.add(
                         this.gl.TRIANGLE_STRIP,
                         vertexData,
-                        this._texture.getGroup()
+                        group
                     );
                 }
                 else {

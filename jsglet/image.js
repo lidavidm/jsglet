@@ -26,7 +26,10 @@ define(["./common", "./graphics", "./event"], function(common, graphics, event) 
             return this;
         },
 
-        getGroup: function() {
+        getGroup: function(p_new) {
+            if (p_new) {
+                return new graphics.TextureGroup(this);
+            }
             if (this._group == null) {
                 this._group = new graphics.TextureGroup(this);
             }
@@ -58,8 +61,8 @@ define(["./common", "./graphics", "./event"], function(common, graphics, event) 
             return this._texture;
         },
 
-        getGroup: function() {
-            return this._texture.getGroup();
+        getGroup: function(p_new) {
+            return this._texture.getGroup(p_new);
         },
 
         getTexCoords: function() {

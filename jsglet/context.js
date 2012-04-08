@@ -68,31 +68,32 @@ define(
 
                 this.modelMatrix = mat4.create();
                 mat4.identity(this.modelMatrix);
+                this._modelMatrixStack = [];
 
                 this._projection = mat4.create();
                 this._view = mat4.create();
+                this.updateProjectionMatrix();
+                this.updateViewMatrix();
             },
 
-            makeProjectionMatrix: function() {
+            updateProjectionMatrix: function() {
                 mat4.ortho(this.left, this.right, this.bottom, this.top,
                            this.near, this.far, this._projection);
-                return this._projection;
             },
 
-            makeViewMatrix: function() {
+            updateViewMatrix: function() {
                 mat4.lookAt(this.eye, this.center, this.up, this._view);
-                return this._view;
             },
 
             makeModelViewMatrix: function() {
                 var result = mat4.create();
-                mat4.multiply(this.makeViewMatrix(), this.modelMatrix, result);
+                mat4.multiply(this._view, this.modelMatrix, result);
                 return result;
             },
 
             makeModelViewProjectionMatrix: function() {
                 var result = mat4.create();
-                mat4.multiply(this.makeProjectionMatrix(),
+                mat4.multiply(this._projection,
                               this.makeModelViewMatrix(), result);
                 return result;
             },
@@ -100,6 +101,22 @@ define(
             apply: function() {
                 this.gl.uniformMatrix4fv(this.matrixHandle, false,
                                          this.makeModelViewProjectionMatrix());
+            },
+
+            pushModel: function() {
+                this._modelMatrixStack.push(this.modelMatrix);
+            },
+
+            popModel: function() {
+                this.modelMatrix = this._modelMatrixStack.pop();
+                if (!this.modelMatrix) {
+                    throw new common.error("Model matrix stack underflow");
+                }
+            },
+
+            identityModel: function() {
+                this.modelMatrix = mat4.create();
+                mat4.identity(this.modelMatrix);
             },
 
             eyeAt: function(x, y, z) {

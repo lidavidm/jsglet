@@ -46,7 +46,7 @@ define(["./common"], function(common) {
         },
 
         __repr__: function() {
-            return "TextureGroup " + this.texture._name;
+            return "TextureGroup " + this.texture._name + " parent: " + this.parent;
         }
     });
 
@@ -340,9 +340,10 @@ define(["./common"], function(common) {
                 var buffer = module.buffer(p_renderingMethod, p_buffers);
                 this._mbos.push(buffer);
                 var group = this._addGroup(p_group);
-                if (!_.has(this._group_buffers, group)) {
+                if (!_.include(_.keys(this._group_buffers), group)) {
                     this._group_buffers[group] = [];
                 }
+                console.log(group)
                 this._group_buffers[group].push(buffer);
                 return buffer;
             },
@@ -353,8 +354,9 @@ define(["./common"], function(common) {
 
             build: function() {
                 var visit = function(group) {
+                    var buffers = this._group_buffers[group] || [];
                     var drawCalls = _.reject(_.map(
-                        this._group_buffers[group],
+                        buffers,
                         common.proxy(function(bo, index) {
                             if (!bo.deleted) {
                                 return function() {
@@ -371,9 +373,9 @@ define(["./common"], function(common) {
                     var children = this._group_children[group];
 
                     if (children) {
-                        _.each(children, function(c) {
+                        _.each(children, common.proxy(function(c) {
                             Array.prototype.push.apply(drawCalls, visit.call(this, c));
-                        });
+                        }, this));
                     }
                     var calls = [function() { group.set(); }];
                     Array.prototype.push.apply(calls, drawCalls);
@@ -385,6 +387,7 @@ define(["./common"], function(common) {
                 _.each(this._groups_top, function(g) {
                     Array.prototype.push.apply(this._draw_list, visit.call(this, g));
                 }, this);
+                console.log(this._draw_list)
             },
 
             _addGroup: function(p_group) {
@@ -396,8 +399,11 @@ define(["./common"], function(common) {
                     if (p_group.parent == null) {
                         this._groups_top.push(p_group);
                     }
+                    else {
+                        //this._addGroup(p_group.parent);
+                    }
                 }
-                else if (p_group.parent) {
+                if (p_group.parent) {
                     if (!_.include(this._groups, p_group.parent)) {
                         this._addGroup(p_group.parent);
                     }
