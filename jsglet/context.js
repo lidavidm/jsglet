@@ -115,7 +115,6 @@ define(
             },
 
             identityModel: function() {
-                this.modelMatrix = mat4.create();
                 mat4.identity(this.modelMatrix);
             },
 

@@ -21,6 +21,10 @@ require(["jsglet/core"], function(jsglet) {
         unset: function() {
             this.camera.popModel();
             this.camera.apply();
+        },
+
+        __repr__: function() {
+            return "RotationGroup " + this.parent + " " + this.$objectId;
         }
     });
 
