@@ -13,7 +13,8 @@
     CLASSY_VERSION = '1.4',
     context = this,
     old = context.Class,
-    disable_constructor = false;
+    disable_constructor = false,
+    object_id = 0;
 
   /* we check if $super is in use by a class if we can.  But first we have to
      check if the JavaScript interpreter supports that.  This also matches
@@ -123,6 +124,8 @@
       if (disable_constructor)
         return;
       var proper_this = context === this ? cheapNew(arguments.callee) : this;
+      proper_this.$objectId = object_id;
+      object_id++;
       proper_this.$class = rv;
       if (proper_this.__init__)
         proper_this.__init__.apply(proper_this, arguments);
