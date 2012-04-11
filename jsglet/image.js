@@ -37,7 +37,7 @@ define(["./common", "./graphics", "./event"], function(common, graphics, event) 
         },
 
         getTexCoords: function() {
-            return [[0, 0], [1,0], [1, 1], [0, 1]];
+            return [[1, 1], [0, 1], [0, 0], [1, 0]];
         },
 
         bind: function() {
