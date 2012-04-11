@@ -150,6 +150,10 @@ define(["./common", "./graphics", "./image"], function(common, graphics, image) 
                     this._x, this._y,
                     this._x, this._y + this._height
                 ]));
+            },
+
+            __repr__: function() {
+                return "Sprite" + this.$objectId;
             }
         })
     };

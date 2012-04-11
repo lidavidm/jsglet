@@ -324,6 +324,10 @@ define(["./common"], function(common) {
                 }
                 this.bufferObjects = {};
                 this.deleted = true;
+            },
+
+            __repr__: function() {
+                return "MultiBufferObject" + this.$objectId;
             }
         }),
 
@@ -340,7 +344,7 @@ define(["./common"], function(common) {
                 var buffer = module.buffer(p_renderingMethod, p_buffers);
                 this._mbos.push(buffer);
                 var group = this._addGroup(p_group);
-                if (!_.include(_.keys(this._group_buffers), group)) {
+                if (!_.include(_.keys(this._group_buffers), group.toString())) {
                     this._group_buffers[group] = [];
                 }
 
