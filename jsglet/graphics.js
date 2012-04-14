@@ -348,7 +348,7 @@ define(["./common"], function(common) {
                     this._group_buffers[group] = [];
                 }
 
-                this._group_buffers[group].push(buffer);
+                this._group_buffers[group.toString()].push(buffer);
                 return buffer;
             },
 
@@ -358,7 +358,7 @@ define(["./common"], function(common) {
 
             build: function() {
                 var visit = function(group) {
-                    var buffers = this._group_buffers[group] || [];
+                    var buffers = this._group_buffers[group.toString()] || [];
                     var drawCalls = _.reject(_.map(
                         buffers,
                         common.proxy(function(bo, index) {
@@ -369,7 +369,7 @@ define(["./common"], function(common) {
                             }
                             else {
                                 delete this._mbos[_.indexOf(this._mbos, bo)];
-                                delete this._group_buffers[group][index];
+                                delete this._group_buffers[group.toString()][index];
                             }
                         }, this)
                     ), _.isUndefined);

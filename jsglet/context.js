@@ -104,7 +104,9 @@ define(
             },
 
             pushModel: function() {
-                this._modelMatrixStack.push(this.modelMatrix);
+                var matrix = mat4.create();
+                mat4.set(this.modelMatrix, matrix);
+                this._modelMatrixStack.push(matrix);
             },
 
             popModel: function() {
