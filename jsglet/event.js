@@ -22,7 +22,8 @@ define(["./common"], function(common) {
                     var listeners = this.__eventHandlers[event];
                     if (undefined === listeners) return;
                     for (var i = 0; i < listeners.length; i++) {
-                        listeners[i].apply(null, args);
+                        if (event == "keyUp") a_ = listeners[0];
+                        listeners[i].apply(listeners[i], args);
                     }
                 },
 
@@ -37,14 +38,16 @@ define(["./common"], function(common) {
                     for (var i = 0; i < objects.length; i++) {
                         for (var propName in objects[i]) {
                             // we want to search superclasses too
-                            var prefix = propName.substring(0, 3);
-                            var suffix = propName.substring(3);
-                            suffix = jsglet.util.uncapitalize(suffix);
+                            var prefix = propName.substring(0, 2);
+                            var suffix = propName.substring(2);
+                            suffix = common.util.uncapitalize(suffix);
                             if (prefix == "on" && _.include(args, suffix)) {
                                 if (!_.has(listeners, suffix)) {
                                     listeners[suffix] = [];
                                 }
-                                listeners[suffix].push(objects[i][propName]);
+                                listeners[suffix].push([
+                                    objects[i],objects[i][propName]
+                                ]);
                             }
                         }
                     }
@@ -55,13 +58,16 @@ define(["./common"], function(common) {
                         var event = events[i];
                         var eventListeners = listeners[event];
 
-                        function __stackLevel(p_args) {
-                            _.each(__stackLevel.__listeners, function(p_fn) {
-                                p_fn.apply(null, p_args);
+                        var __stackLevel = function() {
+                            var args = arguments;
+                            _.each(this.__listeners, function(p_data) {
+                                // each p_data is [object, function]
+                                p_data[1].apply(p_data[0], args);
                             });
                         }
 
                         __stackLevel.__listeners = eventListeners;
+                        __stackLevel.__event = event;
 
                         this.addListener(event, __stackLevel);
                     }

@@ -51,8 +51,9 @@ require(["jsglet/core"], function(jsglet) {
     pacman = null;
 
     var pacmanGroup = null;
+    var speed = 4;
     var pacmanVelocity = [0, 0];
-    var speed = 6;
+    var pacmanPosition = [0, 0];
 
     var points = 0;
 
@@ -154,60 +155,80 @@ require(["jsglet/core"], function(jsglet) {
 
     var fpsCounter = $("#fps");
 
-    context.onKeyDown(function(e) {
-        if (e.keyCode == jsglet.event.keyboard.KeyCode.LEFT) {
-            e.preventDefault();
-            pacmanGroup.angle = Math.PI;
-            pacmanVelocity[0] = -speed;
-        }
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.RIGHT) {
-            e.preventDefault();
-            pacmanGroup.angle = 0;
-            pacmanVelocity[0] = speed;
-        }
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.UP) {
-            e.preventDefault();
-            pacmanGroup.angle = Math.PI / 2;
-            pacmanVelocity[1] = speed;
-        }
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.DOWN) {
-            e.preventDefault();
-            pacmanGroup.angle = -Math.PI / 2;
-            pacmanVelocity[1] = -speed;
-        }
-    });
+    var targetPosition = [0, 0];
+
+    var keyState = new jsglet.event.keyboard.KeyStateManager();
+    // XXX should list these explicitly but for now
+    keyState.intercept(_.values(jsglet.event.keyboard.KeyCode));
+    context.pushListeners(keyState);
+
+    var fudger = function(pos) {
+        return Math.pow(
+            2,
+            Math.round(Math.log(pos) / Math.log(2))
+        );
+    };
 
     context.onKeyUp(function(e) {
-        if (e.keyCode == jsglet.event.keyboard.KeyCode.LEFT) {
-            e.preventDefault();
-            pacmanVelocity[0] = 0;
+        var fudgeX = 0, fudgeY = 0;
+
+        if (e.keyCode == jsglet.event.keyboard.KeyCode.UP ||
+            e.keyCode == jsglet.event.keyboard.KeyCode.DOWN) {
+            fudgeY = pacman.y() - fudger(pacman.y()) + 1;
         }
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.RIGHT) {
-            e.preventDefault();
-            pacmanVelocity[0] = 0;
+
+        else if (e.keyCode == jsglet.event.keyboard.KeyCode.LEFT ||
+                 e.keyCode == jsglet.event.keyboard.KeyCode.RIGHT) {
+            fudgeX =  pacman.x() - fudger(pacman.x()) + 1;
         }
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.UP) {
-            e.preventDefault();
-            pacmanVelocity[1] = 0;
-        }
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.DOWN) {
-            e.preventDefault();
-            pacmanVelocity[1] = 0;
-        }
+
+        if (Math.abs(fudgeX) > 5) fudgeX = 0;
+        if (Math.abs(fudgeY) > 5) fudgeY = 0
+
+        pacman.positionDelta.apply(pacman, [fudgeX, fudgeY]);
     });
+
+    jsglet.clock.scheduleInterval(function() {
+        if (keyState.isDown(jsglet.event.keyboard.KeyCode.LEFT)) {
+            targetPosition[0] = pacmanPosition[0] - 1;
+        }
+        if (keyState.isDown(jsglet.event.keyboard.KeyCode.RIGHT)) {
+            targetPosition[0] = pacmanPosition[0] + 1;
+        }
+
+        if (keyState.isDown(jsglet.event.keyboard.KeyCode.UP)) {
+            targetPosition[1] = pacmanPosition[1] + 1;
+        }
+        if (keyState.isDown(jsglet.event.keyboard.KeyCode.DOWN)) {
+            targetPosition[1] = pacmanPosition[1] - 1;
+        }
+
+        pacmanPosition = [Math.floor(pacman.x() / 32),
+                          Math.floor(pacman.y() / 32)];
+        $("#score").html(pacmanPosition.toString() + " " + targetPosition.toString());
+
+
+        var targetX = targetPosition[0] - pacmanPosition[0];
+        var targetY = targetPosition[1] - pacmanPosition[1];
+        pacman.positionDelta.apply(pacman, [
+            targetX * speed,
+            targetY * speed
+        ]);
+    }, 30);
+
+    jsglet.clock.scheduleInterval(function() {
+        fpsCounter.html(Math.round(jsglet.clock.getDefaultClock().getFps()));
+    }, 500);
+
+    jsglet.clock.scheduleInterval(function() {
+        // Last term helps to smooth out rotations (else when key is
+        // released pacman "jumps" to the correct spot)
+        pacmanGroup.x = pacman.x() + 16 + pacmanVelocity[0];
+        pacmanGroup.y = pacman.y() + 16 + pacmanVelocity[1];
+    }, 1000 / 30);
 
     $("#start").click(function() {
         jsglet.app.run();
-
-        jsglet.clock.scheduleInterval(function() {
-            fpsCounter.html(Math.round(jsglet.clock.getDefaultClock().getFps()));
-        }, 500);
-
-        jsglet.clock.scheduleInterval(function() {
-            pacmanGroup.x = pacman.x() + 16;
-            pacmanGroup.y = pacman.y() + 16;
-            pacman.positionDelta.apply(pacman, pacmanVelocity);
-        }, 1000 / 30)
     });
 });
 
