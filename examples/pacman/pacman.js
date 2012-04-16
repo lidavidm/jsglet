@@ -113,7 +113,7 @@ require(["jsglet/core"], function(jsglet) {
             $.get("wall.json")
         ).then(function(texture, wallData) {
 
-            _.times(11, function() {
+            _.times(10, function() {
                 var collisionRow = [];
                 _.times(11, function() {
                     collisionRow.push([false, false, false, false]);
@@ -121,9 +121,14 @@ require(["jsglet/core"], function(jsglet) {
                 collision.push(collisionRow);
             });
 
-            // block off the bottom row
+            // block off the edges
             for (var i = 0; i < 10; i++) {
                 collision[i][0][2] = true;
+                collision[i][10][0] = true;
+            }
+            for (var i = 0; i < 11; i++) {
+                collision[0][i][3] = true;
+                collision[9][i][1] = true;
             }
 
             _.each(wallData[0], function(w) {
@@ -198,22 +203,26 @@ require(["jsglet/core"], function(jsglet) {
 
     jsglet.clock.scheduleInterval(function() {
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.LEFT)) {
+            pacmanGroup.angle = Math.PI;
             if (!collides(LEFT)) {
                 targetPosition[0] = pacmanPosition[0] - 1;
             }
         }
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.RIGHT)) {
+            pacmanGroup.angle = 0;
             if (!collides(RIGHT)) {
                 targetPosition[0] = pacmanPosition[0] + 1;
             }
         }
 
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.UP)) {
+            pacmanGroup.angle = Math.PI / 2;
             if (!collides(TOP)) {
                 targetPosition[1] = pacmanPosition[1] + 1;
             }
         }
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.DOWN)) {
+            pacmanGroup.angle = -Math.PI / 2;
             if (!collides(BOTTOM)) {
                 targetPosition[1] = pacmanPosition[1] - 1;
             }
@@ -224,25 +233,33 @@ require(["jsglet/core"], function(jsglet) {
 
         var targetX = (targetPosition[0] * 32) - pacman.x() + 1;
         var targetY = (targetPosition[1] * 32) - pacman.y() + 1;
+
         var speedX = (Math.abs(targetX) > speed) ? speed : Math.abs(targetX);
         var speedY = (Math.abs(targetY) > speed) ? speed : Math.abs(targetY);
 
-        pacman.positionDelta.apply(pacman, [
-            sign(targetX) * speedX,
-            sign(targetY) * speedY
-        ]);
-    }, 30);
+        var velocityX = sign(targetX) * speedX;
+        var velocityY = sign(targetY) * speedY;
+        pacmanVelocity = [velocityX, velocityY];
+        pacman.positionDelta.apply(pacman, pacmanVelocity);
+
+        // Last term helps to smooth out rotations (else when key is
+        // released pacman "jumps" to the correct spot)
+        pacmanGroup.x = pacman.x() + 16 + (velocityX / 2);
+        pacmanGroup.y = pacman.y() + 16 + (velocityY / 2);
+    }, 40);
+
+    jsglet.clock.scheduleInterval(function() {
+        if (pacmanVelocity[0] != 0 || pacmanVelocity[1] != 0) {
+            pacmanAnimation.next();
+        }
+        else {
+            pacmanAnimation.reset();
+        }
+    }, 100);
 
     jsglet.clock.scheduleInterval(function() {
         fpsCounter.html(Math.round(jsglet.clock.getDefaultClock().getFps()));
     }, 500);
-
-    jsglet.clock.scheduleInterval(function() {
-        // Last term helps to smooth out rotations (else when key is
-        // released pacman "jumps" to the correct spot)
-        pacmanGroup.x = pacman.x() + 16 + pacmanVelocity[0];
-        pacmanGroup.y = pacman.y() + 16 + pacmanVelocity[1];
-    }, 1000 / 30);
 
     $("#start").click(function() {
         jsglet.app.run();
