@@ -51,9 +51,11 @@ require(["jsglet/core"], function(jsglet) {
     pacman = null;
 
     var pacmanGroup = null;
-    var speed = 4;
+    var speed = 2;
     var pacmanVelocity = [0, 0];
     var pacmanPosition = [0, 0];
+    var collision = []; // [[[top, right, bottom, left]]] where first
+                        // array is x, second is y
 
     var points = 0;
 
@@ -110,16 +112,37 @@ require(["jsglet/core"], function(jsglet) {
             loadImage("sprites/wall.png"),
             $.get("wall.json")
         ).then(function(texture, wallData) {
+
+            _.times(11, function() {
+                var collisionRow = [];
+                _.times(11, function() {
+                    collisionRow.push([false, false, false, false]);
+                });
+                collision.push(collisionRow);
+            });
+
+            // block off the bottom row
+            for (var i = 0; i < 10; i++) {
+                collision[i][0][2] = true;
+            }
+
             _.each(wallData[0], function(w) {
                 var wall = new jsglet.graphics.sprite.Sprite(texture, {
                     batch: batch
                 });
-                if (w[2] == "h")
+                if (w[2] == "h") {
                     wall.size(32, 2);
-                else if (w[2] == "v")
+                    collision[w[0]][w[1] + 1][2] = true;
+                    collision[w[0]][w[1]][0] = true;
+                }
+                else if (w[2] == "v") {
                     wall.size(2, 32);
-                else
+                    collision[w[0]][w[1] + 1][3] = true;
+                    collision[w[0] - 1][w[1] + 1][1] = true;
+                }
+                else {
                     throw new jsglet.common.error("Invalid wall data", w)
+                }
                 wall.x(w[0] * 32 + 1);
                 wall.y(w[1] * 32 + 33);
                 walls.push(wall);
@@ -162,57 +185,51 @@ require(["jsglet/core"], function(jsglet) {
     keyState.intercept(_.values(jsglet.event.keyboard.KeyCode));
     context.pushListeners(keyState);
 
-    var fudger = function(pos) {
-        return Math.pow(
-            2,
-            Math.round(Math.log(pos) / Math.log(2))
-        );
-    };
+    var sign = function(x) {
+        if (x == 0) return 0;
+        if (x > 0) return 1;
+        return -1;
+    }
 
-    context.onKeyUp(function(e) {
-        var fudgeX = 0, fudgeY = 0;
-
-        if (e.keyCode == jsglet.event.keyboard.KeyCode.UP ||
-            e.keyCode == jsglet.event.keyboard.KeyCode.DOWN) {
-            fudgeY = pacman.y() - fudger(pacman.y()) + 1;
-        }
-
-        else if (e.keyCode == jsglet.event.keyboard.KeyCode.LEFT ||
-                 e.keyCode == jsglet.event.keyboard.KeyCode.RIGHT) {
-            fudgeX =  pacman.x() - fudger(pacman.x()) + 1;
-        }
-
-        if (Math.abs(fudgeX) > 5) fudgeX = 0;
-        if (Math.abs(fudgeY) > 5) fudgeY = 0
-
-        pacman.positionDelta.apply(pacman, [fudgeX, fudgeY]);
-    });
+    var collides = function(direction) {
+        return collision[pacmanPosition[0]][pacmanPosition[1]][direction];
+    }
+    var TOP = 0, RIGHT = 1, BOTTOM = 2, LEFT = 3;
 
     jsglet.clock.scheduleInterval(function() {
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.LEFT)) {
-            targetPosition[0] = pacmanPosition[0] - 1;
+            if (!collides(LEFT)) {
+                targetPosition[0] = pacmanPosition[0] - 1;
+            }
         }
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.RIGHT)) {
-            targetPosition[0] = pacmanPosition[0] + 1;
+            if (!collides(RIGHT)) {
+                targetPosition[0] = pacmanPosition[0] + 1;
+            }
         }
 
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.UP)) {
-            targetPosition[1] = pacmanPosition[1] + 1;
+            if (!collides(TOP)) {
+                targetPosition[1] = pacmanPosition[1] + 1;
+            }
         }
         if (keyState.isDown(jsglet.event.keyboard.KeyCode.DOWN)) {
-            targetPosition[1] = pacmanPosition[1] - 1;
+            if (!collides(BOTTOM)) {
+                targetPosition[1] = pacmanPosition[1] - 1;
+            }
         }
 
-        pacmanPosition = [Math.floor(pacman.x() / 32),
-                          Math.floor(pacman.y() / 32)];
-        $("#score").html(pacmanPosition.toString() + " " + targetPosition.toString());
+        pacmanPosition = [Math.floor((pacman.x() + 16) / 32),
+                          Math.floor((pacman.y() + 16) / 32)];
 
+        var targetX = (targetPosition[0] * 32) - pacman.x() + 1;
+        var targetY = (targetPosition[1] * 32) - pacman.y() + 1;
+        var speedX = (Math.abs(targetX) > speed) ? speed : Math.abs(targetX);
+        var speedY = (Math.abs(targetY) > speed) ? speed : Math.abs(targetY);
 
-        var targetX = targetPosition[0] - pacmanPosition[0];
-        var targetY = targetPosition[1] - pacmanPosition[1];
         pacman.positionDelta.apply(pacman, [
-            targetX * speed,
-            targetY * speed
+            sign(targetX) * speedX,
+            sign(targetY) * speedY
         ]);
     }, 30);
 
