@@ -51,7 +51,7 @@ require(["jsglet/core"], function(jsglet) {
     pacman = null;
 
     var pacmanGroup = null;
-    var speed = 2;
+    var speed = 4;
     var pacmanVelocity = [0, 0];
     var pacmanPosition = [0, 0];
     var collision = []; // [[[top, right, bottom, left]]] where first
@@ -92,8 +92,13 @@ require(["jsglet/core"], function(jsglet) {
 
         $.when(loadImage("sprites/dot.png")).then(function(texture) {
             for (var row = 0; row < 10; row ++) {
+                var dotRow = [];
+
                 for (var col = 0; col < 10; col++) {
-                    if ((row == 4 || row == 5) && col > 2 && col < 7) continue;
+                    if ((row == 4 || row == 5) && col > 2 && col < 7) {
+                        dotRow.push(null);
+                        continue;
+                    }
                     var dot = new jsglet.graphics.sprite.Sprite(texture, {
                         batch: batch
                     });
@@ -101,8 +106,10 @@ require(["jsglet/core"], function(jsglet) {
                     dot.x(col * 32 + 9);
                     dot.y(row * 32 + 41);
 
-                    dots.push(dot);
+                    dotRow.push(dot);
                 }
+
+                dots.push(dotRow);
             }
 
             batch.build();
@@ -228,6 +235,20 @@ require(["jsglet/core"], function(jsglet) {
             }
         }
 
+        if (pacmanPosition[1] > 0) {
+            var dot = dots[pacmanPosition[1] - 1][pacmanPosition[0]];
+
+            if (!_.isNull(dot)) {
+                dots[pacmanPosition[1] - 1][pacmanPosition[0]] = null;
+                dot.del();
+                points += 10;
+                $("#score").html(points);
+            }
+        }
+
+    }, 100);
+
+    jsglet.clock.scheduleInterval(function() {
         pacmanPosition = [Math.floor((pacman.x() + 16) / 32),
                           Math.floor((pacman.y() + 16) / 32)];
 
@@ -240,12 +261,13 @@ require(["jsglet/core"], function(jsglet) {
         var velocityX = sign(targetX) * speedX;
         var velocityY = sign(targetY) * speedY;
         pacmanVelocity = [velocityX, velocityY];
+
         pacman.positionDelta.apply(pacman, pacmanVelocity);
 
         // Last term helps to smooth out rotations (else when key is
         // released pacman "jumps" to the correct spot)
-        pacmanGroup.x = pacman.x() + 16 + (velocityX / 2);
-        pacmanGroup.y = pacman.y() + 16 + (velocityY / 2);
+        pacmanGroup.x = pacman.x() + 15.5 + (velocityX / 2);
+        pacmanGroup.y = pacman.y() + 15.5 + (velocityY / 2);
     }, 40);
 
     jsglet.clock.scheduleInterval(function() {
@@ -258,7 +280,8 @@ require(["jsglet/core"], function(jsglet) {
     }, 100);
 
     jsglet.clock.scheduleInterval(function() {
-        fpsCounter.html(Math.round(jsglet.clock.getDefaultClock().getFps()));
+        // fpsCounter.html(Math.round(jsglet.clock.getDefaultClock().getFps()));
+        fpsCounter.html(pacmanPosition.toString())
     }, 500);
 
     $("#start").click(function() {
@@ -284,6 +307,9 @@ var intersects = {
         return (cd2 <= Math.pow(p_circle.r, 2));
     },
 
-    aabbAABB: function(p_aabb1, p_aabb2) {
+    circleCircle: function(p_circle1, p_circle2) {
+        var distance2 = Math.pow(p_circle1.x - p_circle2.x, 2) +
+            Math.pow(p_circle1.y - p_circle2.y, 2);
+        return distance2 <= Math.pow(p_circle1.r + p_circle2.r, 2);
     }
 }
